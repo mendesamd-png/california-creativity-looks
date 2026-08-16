@@ -100,6 +100,18 @@
   .tier ul { list-style: none; font-size: 15px; line-height: 1.9; color: var(--muted); }
   .tier ul li::before { content: "· "; color: var(--accent); font-weight: 700; }
 
+  .carousel { position: relative; border-radius: 20px; overflow: hidden; margin-top: 34px; }
+  .carousel img.slide { display: block; width: 100%; }
+  .carousel .clab { position: absolute; left: 18px; bottom: 44px; font-size: 17px; font-weight: 700; color: #fff;
+    padding: 8px 16px; border-radius: 999px; background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  .carousel .arr { position: absolute; top: 50%; transform: translateY(-50%); width: 48px; height: 48px;
+    border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.7); background: rgba(0,0,0,0.35); color: #fff;
+    font-size: 19px; cursor: pointer; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  .carousel .arr.prev { left: 16px; } .carousel .arr.next { right: 16px; }
+  .carousel .dots { position: absolute; left: 0; right: 0; bottom: 16px; display: flex; gap: 8px; justify-content: center; }
+  .carousel .dots i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.35); }
+  .carousel .dots i.on { background: #fff; }
   footer { text-align: center; padding: 60px 20px 80px; color: var(--faint); font-size: 13.5px; }
   .note { font-size: 13px; color: var(--faint); margin-top: 18px; line-height: 1.5; }
 </style>
@@ -123,22 +135,14 @@
 <section>
   <div class="eyebrow">Arraste para comparar</div>
   <h2>Do log ao look.<br><span class="accent">Em um arraste.</span></h2>
-  <p class="sub">Blackmagic Pocket 6K Pro, BRAW Gen5, deserto do Atacama. Esquerda: o arquivo como sai da câmera. Direita: look Golden aplicado em um node.</p>
+  <p class="sub">Blackmagic Pocket 6K Pro, BRAW Gen5. Esquerda: o arquivo como sai da camera. Direita: o resultado final completo, Golden + Cinestill 50D + Halation + Glow + Grain + Vignette + LUT Malibu.</p>
   <div class="compare glass" id="cmp1" style="margin-top:34px;">
-    <img src="img/ata-golden.jpg" alt="Com look">
+    <img src="img/ata-final.jpg" alt="Resultado final">
     <div class="top" id="cmp1top"><img src="img/ata-log.jpg" alt="Log original"></div>
     <div class="divider" id="cmp1div"></div>
-    <div class="knob" id="cmp1knob">◂▸</div>
+    <div class="knob" id="cmp1knob">&#9666;&#9656;</div>
     <div class="tag l">Log original</div>
-    <div class="tag r">Golden</div>
-  </div>
-  <div class="compare glass" id="cmp2" style="margin-top:20px;">
-    <img src="img/ata-full.jpg" alt="Cinestill full pack">
-    <div class="top" id="cmp2top"><img src="img/ata-log.jpg" alt="Log original"></div>
-    <div class="divider" id="cmp2div"></div>
-    <div class="knob" id="cmp2knob">◂▸</div>
-    <div class="tag l">Log original</div>
-    <div class="tag r">Cinestill 50D · Halation · Glow · Grain</div>
+    <div class="tag r">Resultado final</div>
   </div>
 </section>
 
@@ -161,86 +165,46 @@
   <div class="grid g2">
     <div class="tile"><img src="img/l01-log.jpg"><div class="lab">Sony FX3 · S-Log3</div></div>
     <div class="tile"><img src="img/l01-golden.jpg"><div class="lab">Golden</div></div>
-    <div class="tile"><img src="img/l03-log.jpg"><div class="lab">Blackmagic PYXIS · BRAW Gen5</div></div>
-    <div class="tile"><img src="img/l03-golden.jpg"><div class="lab">Golden</div></div>
-    <div class="tile"><img src="img/l05-log.jpg"><div class="lab">Sony · S-Log3</div></div>
-    <div class="tile"><img src="img/l05-golden.jpg"><div class="lab">Golden</div></div>
+    <div class="tile"><img src="img/red-log.jpg"><div class="lab">RED · Log3G10</div></div>
+    <div class="tile"><img src="img/red-golden.jpg"><div class="lab">Golden</div></div>
+    <div class="tile"><img src="img/dji-log.jpg"><div class="lab">DJI · D-Log</div></div>
+    <div class="tile"><img src="img/dji-golden.jpg"><div class="lab">Golden</div></div>
   </div>
 </section>
 
 <section>
   <div class="eyebrow">Looks autorais</div>
   <h2>Sete looks. Dois slots. Mistura infinita.</h2>
-  <div class="grid g4">
-    <div class="tile"><img src="img/Clean_-_Rec_709.jpg"><div class="lab">Clean</div></div>
-    <div class="tile"><img src="img/Golden.jpg"><div class="lab">Golden</div></div>
-    <div class="tile"><img src="img/Coastal.jpg"><div class="lab">Coastal</div></div>
-    <div class="tile"><img src="img/Neon.jpg"><div class="lab">Neon</div></div>
-    <div class="tile"><img src="img/Dune.jpg"><div class="lab">Dune</div></div>
-    <div class="tile"><img src="img/Silver.jpg"><div class="lab">Silver</div></div>
-    <div class="tile"><img src="img/Haze.jpg"><div class="lab">Haze</div></div>
-    <div class="tile text glass"><div><b>Main <span class="accent">+</span> Sub</b><div class="note">dois looks somados,<br>cada um com a sua dose</div></div></div>
-  </div>
+  <div class="carousel glass" data-car='[["img/Clean_-_Rec_709.jpg","Clean"],["img/Golden.jpg","Golden"],["img/Coastal.jpg","Coastal"],["img/Neon.jpg","Neon"],["img/Dune.jpg","Dune"],["img/Silver.jpg","Silver"],["img/Haze.jpg","Haze"]]'></div>
+  <div class="note">Main + Sub: dois looks somados, cada um com a sua dose.</div>
 </section>
 
 <section>
   <div class="eyebrow">Film emulation</div>
   <h2>Treze estoques com personalidade de verdade.</h2>
-  <div class="grid g4">
-    <div class="tile"><img src="img/ata-Kodak_Ektar_25.jpg"><div class="lab">Kodak Ektar 25</div></div>
-    <div class="tile"><img src="img/ata-Kodak_Kodachrome_64.jpg"><div class="lab">Kodachrome 64</div></div>
-    <div class="tile"><img src="img/ata-Fuji_Velvia_100.jpg"><div class="lab">Fuji Velvia 100</div></div>
-    <div class="tile"><img src="img/ata-Cinestill_50D.jpg"><div class="lab">Cinestill 50D</div></div>
-    <div class="tile"><img src="img/ata-Fuji_Superia_1600.jpg"><div class="lab">Fuji Superia 1600</div></div>
-    <div class="tile"><img src="img/ata-Prokudin_Gorskiy_1906.jpg"><div class="lab">Prokudin Gorskiy 1906</div></div>
-    <div class="tile"><img src="img/ata-Rollei_Ortho_25.jpg"><div class="lab">Rollei Ortho 25 · P&B</div></div>
-    <div class="tile"><img src="img/ata-Ilford_HP5_400.jpg"><div class="lab">Ilford HP5 400 · P&B</div></div>
-  </div>
+  <div class="carousel glass" data-car='[["img/ata-Kodak_Ektar_25.jpg","Kodak Ektar 25"],["img/ata-Kodak_Kodachrome_64.jpg","Kodachrome 64"],["img/ata-Fuji_Velvia_100.jpg","Fuji Velvia 100"],["img/ata-Cinestill_50D.jpg","Cinestill 50D"],["img/ata-Fuji_Superia_1600.jpg","Fuji Superia 1600"],["img/ata-Prokudin_Gorskiy_1906.jpg","Prokudin Gorskiy 1906"],["img/ata-Rollei_Ortho_25.jpg","Rollei Ortho 25 · P&B"],["img/ata-Ilford_HP5_400.jpg","Ilford HP5 400 · P&B"]]'></div>
   <div class="note">Interpretações autorais do caráter documentado de cada estoque. Nomes em revisão jurídica para comercialização.</div>
 </section>
 
 <section>
   <div class="eyebrow">Creative LUTs</div>
   <h2>A assinatura da California, em nove cartas.</h2>
-  <div class="grid g5">
-    <div class="tile"><img src="img/ata-Malibu.jpg"><div class="lab">Malibu</div></div>
-    <div class="tile"><img src="img/ata-Pacific.jpg"><div class="lab">Pacific</div></div>
-    <div class="tile"><img src="img/ata-Mojave.jpg"><div class="lab">Mojave</div></div>
-    <div class="tile"><img src="img/ata-Laguna.jpg"><div class="lab">Laguna</div></div>
-    <div class="tile"><img src="img/ata-Salton.jpg"><div class="lab">Salton</div></div>
-    <div class="tile"><img src="img/ata-Joshua.jpg"><div class="lab">Joshua</div></div>
-    <div class="tile"><img src="img/ata-Tahoe.jpg"><div class="lab">Tahoe</div></div>
-    <div class="tile"><img src="img/ata-Sonoma.jpg"><div class="lab">Sonoma</div></div>
-    <div class="tile"><img src="img/ata-Summer.jpg"><div class="lab">Summer</div></div>
-    <div class="tile text glass"><div><b>Look <span class="accent">+</span> Film <span class="accent">+</span> LUT</b><div class="note">três camadas,<br>três intensidades</div></div></div>
-  </div>
+  <div class="carousel glass" data-car='[["img/ata-Malibu.jpg","Malibu"],["img/ata-Pacific.jpg","Pacific"],["img/ata-Mojave.jpg","Mojave"],["img/ata-Laguna.jpg","Laguna"],["img/ata-Salton.jpg","Salton"],["img/ata-Joshua.jpg","Joshua"],["img/ata-Tahoe.jpg","Tahoe"],["img/ata-Sonoma.jpg","Sonoma"],["img/ata-Summer.jpg","Summer"]]'></div>
+  <div class="note">Look + Film + LUT: três camadas, três intensidades.</div>
 </section>
 
 <section>
   <div class="eyebrow">Textura e óptica</div>
   <h2>O acabamento que faz parecer filme.</h2>
-  <div class="grid g3">
-    <div class="tile"><img src="img/ata-Halation_60.jpg"><div class="lab">Halation · por bitola 8/16/35/65 mm</div></div>
-    <div class="tile"><img src="img/ata-Glow_50.jpg"><div class="lab">Glow</div></div>
-    <div class="tile"><img src="img/ata-Vignette_EV_-0_7.jpg"><div class="lab">Vignette · EV, size, feather, aspect, centro</div></div>
+  <div class="grid g2">
+    <div class="tile"><img src="img/fx-halation.jpg"><div class="lab">Halation · sangria quente nas altas, por bitola 8/16/35/65 mm</div></div>
+    <div class="tile"><img src="img/fx-glow.jpg"><div class="lab">Glow · difusão das altas luzes</div></div>
+    <div class="tile"><img src="img/fx-vignette.jpg"><div class="lab">Vignette · EV, size, feather, aspect e centro</div></div>
+    <div class="tile"><img src="img/fx-grain.jpg"><div class="lab">Grain · por bitola e ISO</div></div>
   </div>
 </section>
 
-<section>
-  <div class="eyebrow">Por baixo do capô</div>
-  <h2>Cor de verdade, verificada por medição.</h2>
-  <table class="val">
-    <tr><th>Entrada</th><th>Desvio médio*</th><th></th></tr>
-    <tr><td>ARRI LogC3 / LogC4</td><td>0.0006</td><td class="ok">Validada</td></tr>
-    <tr><td>Sony S-Log3</td><td>0.0005</td><td class="ok">Validada</td></tr>
-    <tr><td>RED Log3G10</td><td>0.0005</td><td class="ok">Validada</td></tr>
-    <tr><td>Panasonic V-Log</td><td>0.0007</td><td class="ok">Validada</td></tr>
-    <tr><td>Blackmagic Film Gen5</td><td>0.0012</td><td class="ok">Validada</td></tr>
-    <tr><td>Canon Log 3 · Fuji F-Log2 · DJI D-Log</td><td>0.0005</td><td class="ok">Validadas</td></tr>
-  </table>
-  <div class="note">* vs Color Space Transform do DaVinci Resolve Studio 21, em código DaVinci Intermediate. Tolerância: &lt; 0.002.
-  Curvas dos whitepapers oficiais, matrizes derivadas das primárias publicadas. Playback 4K em tempo real. Resolve Studio 19.1+ · macOS, Windows, Linux.</div>
-</section>
+
 
 <section>
   <div class="eyebrow">Planos · acesso vitalício</div>
@@ -306,7 +270,32 @@
     render();
   }
   makeCompare('cmp1');
-  makeCompare('cmp2');
+
+  // carrosseis
+  document.querySelectorAll('.carousel').forEach(car => {
+    const items = JSON.parse(car.dataset.car);
+    let idx = 0;
+    car.innerHTML = `<img class="slide" src="${items[0][0]}" alt="">
+      <div class="clab">${items[0][1]}</div>
+      <button class="arr prev">&#9664;</button><button class="arr next">&#9654;</button>
+      <div class="dots">${items.map((_,i)=>`<i class="${i===0?'on':''}"></i>`).join('')}</div>`;
+    const img = car.querySelector('.slide'), lab = car.querySelector('.clab'),
+          dots = car.querySelectorAll('.dots i');
+    items.forEach(it => { const p = new Image(); p.src = it[0]; });
+    function show(i) {
+      idx = (i + items.length) % items.length;
+      img.src = items[idx][0]; lab.textContent = items[idx][1];
+      dots.forEach((d,j) => d.classList.toggle('on', j === idx));
+    }
+    car.querySelector('.prev').addEventListener('click', () => show(idx - 1));
+    car.querySelector('.next').addEventListener('click', () => show(idx + 1));
+    let sx = null;
+    car.addEventListener('pointerdown', e => sx = e.clientX);
+    car.addEventListener('pointerup', e => {
+      if (sx !== null && Math.abs(e.clientX - sx) > 40) show(idx + (e.clientX < sx ? 1 : -1));
+      sx = null;
+    });
+  });
 </script>
 </body>
 </html>
