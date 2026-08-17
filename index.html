@@ -10,12 +10,14 @@
     --panel: rgba(255,255,255,0.07); --border: rgba(255,255,255,0.16);
     --edge: rgba(255,255,255,0.22); --shadow: rgba(0,0,0,0.38);
     --accent: #ff8a3d; --ok: #30d158; --line: #1d1d1f;
+    --pillon: rgba(255,255,255,0.22);
   }
   :root[data-theme="light"] {
     --bg: #f5f5f7; --text: #1d1d1f; --muted: #515154; --faint: #86868b;
     --panel: rgba(255,255,255,0.55); --border: rgba(0,0,0,0.10);
     --edge: rgba(255,255,255,0.75); --shadow: rgba(0,0,0,0.10);
     --accent: #e06a1f; --ok: #1f9d4d; --line: #d9d9de;
+    --pillon: rgba(255,255,255,0.92);
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
@@ -115,7 +117,8 @@
           backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
           transition: color .2s, border-color .2s, background .2s; }
   .pill:hover { color: var(--text); border-color: var(--edge); }
-  .pill.on { background: linear-gradient(90deg, #ff8a3d, #2fc99e); color: #111; border-color: transparent; }
+  .pill.on { background: var(--pillon); color: var(--text); border-color: var(--edge);
+             box-shadow: inset 0 1px 0 var(--edge), 0 8px 24px var(--shadow); }
   footer { text-align: center; padding: 60px 20px 80px; color: var(--faint); font-size: 13.5px; }
   .note { font-size: 13px; color: var(--faint); margin-top: 18px; line-height: 1.5; }
 </style>
@@ -170,9 +173,9 @@
     <div class="tile"><img src="img/ven-log.jpg"><div class="lab">Sony FX3 · S-Log3</div></div>
     <div class="tile"><img src="img/ven-final.jpg"><div class="lab">Grade final</div></div>
     <div class="tile"><img src="img/red-log2.jpg"><div class="lab">RED · Log3G10</div></div>
-    <div class="tile"><img src="img/red-golden2.jpg"><div class="lab">Golden</div></div>
+    <div class="tile"><img src="img/red-final.jpg"><div class="lab">Grade final</div></div>
     <div class="tile"><img src="img/dji-log.jpg"><div class="lab">DJI · D-Log</div></div>
-    <div class="tile"><img src="img/dji-golden.jpg"><div class="lab">Golden</div></div>
+    <div class="tile"><img src="img/dji-full.jpg"><div class="lab">Grade final</div></div>
   </div>
 </section>
 
