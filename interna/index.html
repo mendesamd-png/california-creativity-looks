@@ -157,6 +157,19 @@
               backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
   .lb .cap { margin-top: 12px; text-align: center; color: #d2d2d7; font-size: 14px; }
 
+  /* demo interativa */
+  .playbar { display: flex; align-items: center; gap: 16px; margin-top: 20px; }
+  .playbar label { font-family: "Space Mono", ui-monospace, monospace; font-size: 12px; font-weight: 700;
+                   letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+  .pslider { -webkit-appearance: none; appearance: none; flex: 1; height: 6px; border-radius: 999px;
+             background: var(--panel); border: 1px solid var(--border); outline: none; }
+  .pslider::-webkit-slider-thumb { -webkit-appearance: none; width: 26px; height: 26px; border-radius: 50%;
+      background: linear-gradient(135deg, #38e1ff, #8b5cf6); border: 1.5px solid rgba(255,255,255,0.75);
+      cursor: pointer; box-shadow: 0 4px 16px var(--shadow); }
+  .pslider::-moz-range-thumb { width: 26px; height: 26px; border-radius: 50%;
+      background: linear-gradient(135deg, #38e1ff, #8b5cf6); border: 1.5px solid rgba(255,255,255,0.75); cursor: pointer; }
+  .pval { font-weight: 900; min-width: 52px; text-align: right; font-size: 15px; }
+
   /* botao de download */
   .dl { display: inline-flex; flex-direction: column; align-items: center; gap: 3px; margin: 26px 0 8px;
         padding: 20px 46px; border-radius: 999px; text-decoration: none; color: var(--text);
@@ -175,6 +188,7 @@
   <div class="brand glass">California <span class="accent">Looks</span> · Interna</div>
   <nav class="glass">
     <a href="#demo">Demo</a>
+    <a href="#play">Interativo</a>
     <a href="#cameras">Câmeras</a>
     <a href="#looks">Looks</a>
     <a href="#films">Films</a>
@@ -208,6 +222,21 @@
     <div class="tag l">Log original</div>
     <div class="tag r">Resultado final</div>
   </div>
+</section>
+
+<section id="play">
+  <div class="eyebrow">Demo interativa</div>
+  <h2>Mexa você mesmo.</h2>
+  <p class="sub">Frame RED em log, direto pro Rec.709. Cada posição dos controles é um render de verdade
+     do engine: a cor que aparece aqui é a cor que o plugin entrega no Resolve.</p>
+  <div class="tile glass" style="margin-top:30px;"><img id="playImg" src="../img/play/l1-i100-f0.jpg" alt=""></div>
+  <div class="pills" id="playLooks"></div>
+  <div class="playbar">
+    <label>Look Intensity</label>
+    <input class="pslider" id="playInt" type="range" min="0" max="100" step="20" value="100">
+    <div class="pval" id="playVal">100%</div>
+  </div>
+  <div class="pills" id="playFilms" style="margin-top:12px;"></div>
 </section>
 
 <section>
@@ -380,6 +409,38 @@
   lb.addEventListener('click', e => { if (e.target === lb) fecharGal(); });
   window.addEventListener('keydown', e => { if (e.key === 'Escape') fecharGal(); });
   document.querySelectorAll('.tile.gal').forEach(t => t.addEventListener('click', () => abrirGal(+t.dataset.g)));
+
+  // demo interativa: cada estado e um render real do engine em ../img/play/
+  const P_LOOKS = ['Clean', 'Golden', 'Coastal', 'Neon', 'Dune', 'Silver', 'Haze'];
+  const P_FILMS = ['Film Off', 'Cinestill 50D', 'Velvia 100'];
+  const pl = { look: 1, inten: 100, film: 0 };
+  const playImg = document.getElementById('playImg');
+  const playInt = document.getElementById('playInt');
+  const lg = document.getElementById('playLooks'), fg = document.getElementById('playFilms');
+  lg.innerHTML = P_LOOKS.map((n, i) => `<button class="pill ${i === 1 ? 'on' : ''}">${n}</button>`).join('');
+  fg.innerHTML = P_FILMS.map((n, i) => `<button class="pill ${i === 0 ? 'on' : ''}">${n}</button>`).join('');
+  function playFonte(l, i, f) { return `../img/play/l${i === 0 ? 0 : l}-i${i}-f${f}.jpg`; }
+  function playUpd() {
+    playImg.src = playFonte(pl.look, pl.inten, pl.film);
+    lg.querySelectorAll('.pill').forEach((p, i) => p.classList.toggle('on', i === pl.look));
+    fg.querySelectorAll('.pill').forEach((p, i) => p.classList.toggle('on', i === pl.film));
+    document.getElementById('playVal').textContent = pl.inten + '%';
+    [pl.inten - 20, pl.inten + 20].forEach(v => {
+      if (v >= 0 && v <= 100) { const im = new Image(); im.src = playFonte(pl.look, v, pl.film); }
+    });
+  }
+  lg.querySelectorAll('.pill').forEach((p, i) => p.addEventListener('click', () => {
+    pl.look = i;
+    if (pl.inten === 0) { pl.inten = 100; playInt.value = 100; }
+    playUpd();
+  }));
+  fg.querySelectorAll('.pill').forEach((p, i) => p.addEventListener('click', () => { pl.film = i; playUpd(); }));
+  playInt.addEventListener('input', e => { pl.inten = +e.target.value; playUpd(); });
+  setTimeout(() => {
+    for (const f of [0, 1, 2]) for (const v of [20, 40, 60, 80, 100]) {
+      const im = new Image(); im.src = playFonte(pl.look, v, f);
+    }
+  }, 1500);
 
   // carrosseis
   document.querySelectorAll('.carousel').forEach(car => {
