@@ -137,9 +137,24 @@
           backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
           transition: color .2s, border-color .2s, background .2s; }
   .pill:hover { color: var(--text); border-color: var(--edge); }
-  .pill.on { background: var(--pillon); color: var(--text); border-color: var(--edge);
-             box-shadow: inset 0 1px 0 var(--edge), 0 8px 24px var(--shadow); }
+  .pill.on { background: linear-gradient(90deg, rgba(255,138,61,0.85), rgba(47,201,158,0.85));
+             color: #0b0b0c; border-color: transparent;
+             box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), 0 8px 24px var(--shadow); }
   footer { text-align: center; padding: 60px 20px 80px; color: var(--faint); font-size: 13.5px; }
+
+  /* lightbox da galeria */
+  .tile.gal { cursor: pointer; }
+  .lb { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.86);
+        backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+        display: none; align-items: center; justify-content: center; padding: 3vh 3vw; }
+  .lb.open { display: flex; }
+  .lb .box { position: relative; width: min(1500px, 94vw, calc(80vh * 16 / 9)); }
+  .lb .box > img { width: 100%; border-radius: 18px; display: block; }
+  .lb .lb-x { position: absolute; top: 14px; right: 14px; z-index: 3; width: 44px; height: 44px;
+              border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.7); background: rgba(0,0,0,0.4);
+              color: #fff; font-size: 17px; cursor: pointer;
+              backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+  .lb .cap { margin-top: 12px; text-align: center; color: #d2d2d7; font-size: 14px; }
   .note { font-size: 13px; color: var(--faint); margin-top: 18px; line-height: 1.5; }
 </style>
 </head>
@@ -164,7 +179,7 @@
   <img class="bg" src="img/hero-wipe2.jpg" alt="">
   <div class="scrim"></div>
   <div class="card glass">
-    <div class="eyebrow" style="color:#ffb175;">DaVinci Resolve · Node único · DCTL</div>
+    <div class="eyebrow" style="color:#ffb175;">DaVinci Resolve · DCTL · Volume 1</div>
     <h1>California<br><span class="accent">Creativity Looks</span></h1>
     <div class="sub" style="margin-top:12px;">by <b>Douglas Mendes</b> · Do log ao look em um node.</div>
   </div>
@@ -206,7 +221,7 @@
     <div class="tile"><img src="img/red-log2.jpg"><div class="lab">RED · Log3G10</div></div>
     <div class="tile"><img src="img/red-final.jpg"><div class="lab">Grade final</div></div>
     <div class="tile"><img src="img/dji-log.jpg"><div class="lab">DJI · D-Log</div></div>
-    <div class="tile"><img src="img/dji-full.jpg"><div class="lab">Grade final</div></div>
+    <div class="tile"><img src="img/dji-neon.jpg"><div class="lab">Neon · pipeline completo</div></div>
   </div>
 </section>
 
@@ -245,16 +260,20 @@
 <section id="resultados">
   <div class="eyebrow">Resultados</div>
   <h2>Grades finais, direto da timeline.</h2>
-  <p class="sub">Cenas reais finalizadas com o sistema: câmera, look, filme e óptica resolvidos no mesmo node.</p>
+  <p class="sub">Cenas reais finalizadas com o sistema: câmera, look, filme e óptica resolvidos no mesmo node.
+     Clique em um frame para ampliar; quando houver o log original, arraste para comparar.</p>
   <div class="grid g3">
-    <div class="tile"><img src="img/leroy.jpg"></div>
-    <div class="tile"><img src="img/elev1.jpg"></div>
-    <div class="tile"><img src="img/elev2.jpg"></div>
+    <div class="tile gal" data-g="0"><img src="img/cella-final-g.jpg"></div>
+    <div class="tile gal" data-g="1"><img src="img/ata-final2.jpg"></div>
+    <div class="tile gal" data-g="2"><img src="img/ven-final-g.jpg"></div>
+    <div class="tile gal" data-g="3"><img src="img/leroy-g.jpg"></div>
+    <div class="tile gal" data-g="4"><img src="img/elev1-g.jpg"></div>
+    <div class="tile gal" data-g="5"><img src="img/elev2-g.jpg"></div>
   </div>
 </section>
 
 <section id="planos">
-  <div class="eyebrow">Planos · acesso vitalício</div>
+  <div class="eyebrow">Planos · acesso vitalício · Volume 1</div>
   <h2>Três formas de ter.</h2>
   <div class="tiers">
     <div class="tier glass">
@@ -281,7 +300,16 @@
   </div>
 </section>
 
-<footer>California Creativity Looks · by Douglas Mendes</footer>
+<section style="padding-top: 0;">
+  <div class="eyebrow">Em breve</div>
+  <h2>Volume 2.</h2>
+  <p class="sub">Este é o Volume 1 da família California Creativity Looks. O Volume 2 já está em produção
+     e será lançado em breve.</p>
+</section>
+
+<footer>California Creativity Looks · Volume 1 · by Douglas Mendes</footer>
+
+<div id="lb" class="lb"><div class="box"></div></div>
 
 <script>
   // tema black/white
@@ -295,11 +323,10 @@
   });
 
   // sliders de comparacao
-  function makeCompare(id) {
-    const box = document.getElementById(id);
-    const top = document.getElementById(id + 'top');
-    const div = document.getElementById(id + 'div');
-    const knob = document.getElementById(id + 'knob');
+  function attachCompare(box) {
+    const top = box.querySelector('.top');
+    const div = box.querySelector('.divider');
+    const knob = box.querySelector('.knob');
     let pos = 0.5;
     function render() {
       const w = box.clientWidth;
@@ -313,10 +340,43 @@
     }
     box.addEventListener('pointerdown', e => { box.setPointerCapture(e.pointerId); move(e.clientX); });
     box.addEventListener('pointermove', e => { if (e.buttons) move(e.clientX); });
-    window.addEventListener('resize', render);
+    new ResizeObserver(render).observe(box);
+    box.querySelectorAll('img').forEach(im => { if (!im.complete) im.addEventListener('load', render); });
     render();
   }
-  makeCompare('cmp1');
+  attachCompare(document.getElementById('cmp1'));
+
+  // galeria de resultados com lightbox
+  const GAL = [
+    { f: 'img/cella-final-g.jpg', l: 'img/cella-log-g.jpg', cap: 'RED · Log3G10 · arraste para comparar' },
+    { f: 'img/ata-final2.jpg',    l: 'img/ata-log2.jpg',    cap: 'Blackmagic Pocket 6K Pro · BRAW Gen5 · arraste para comparar' },
+    { f: 'img/ven-final-g.jpg',   l: 'img/ven-log-g.jpg',   cap: 'Sony FX3 · S-Log3 · arraste para comparar' },
+    { f: 'img/leroy-g.jpg',  l: null, cap: 'Grade final' },
+    { f: 'img/elev1-g.jpg',  l: null, cap: 'Grade final' },
+    { f: 'img/elev2-g.jpg',  l: null, cap: 'Grade final' },
+  ];
+  const lb = document.getElementById('lb');
+  const lbBox = lb.querySelector('.box');
+  function abrirGal(i) {
+    const g = GAL[i];
+    lbBox.innerHTML = '<button class="lb-x">&#10005;</button>' + (g.l
+      ? `<div class="compare"><img src="${g.f}"><div class="top"><img src="${g.l}"></div>
+         <div class="divider"></div><div class="knob">&#9666;&#9656;</div>
+         <div class="tag l">Log original</div><div class="tag r">Grade final</div></div>`
+      : `<img src="${g.f}">`)
+      + `<div class="cap">${g.cap}</div>`;
+    if (g.l) attachCompare(lbBox.querySelector('.compare'));
+    lbBox.querySelector('.lb-x').addEventListener('click', fecharGal);
+    lb.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function fecharGal() {
+    lb.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  lb.addEventListener('click', e => { if (e.target === lb) fecharGal(); });
+  window.addEventListener('keydown', e => { if (e.key === 'Escape') fecharGal(); });
+  document.querySelectorAll('.tile.gal').forEach(t => t.addEventListener('click', () => abrirGal(+t.dataset.g)));
 
   // carrosseis
   document.querySelectorAll('.carousel').forEach(car => {
