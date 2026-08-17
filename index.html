@@ -102,16 +102,20 @@
 
   .carousel { position: relative; border-radius: 20px; overflow: hidden; margin-top: 34px; }
   .carousel img.slide { display: block; width: 100%; }
-  .carousel .clab { position: absolute; left: 18px; bottom: 44px; font-size: 17px; font-weight: 700; color: #fff;
+  .carousel .clab { position: absolute; left: 18px; bottom: 18px; font-size: 17px; font-weight: 700; color: #fff;
     padding: 8px 16px; border-radius: 999px; background: rgba(0,0,0,0.45);
     backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
   .carousel .arr { position: absolute; top: 50%; transform: translateY(-50%); width: 48px; height: 48px;
     border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.7); background: rgba(0,0,0,0.35); color: #fff;
     font-size: 19px; cursor: pointer; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
   .carousel .arr.prev { left: 16px; } .carousel .arr.next { right: 16px; }
-  .carousel .dots { position: absolute; left: 0; right: 0; bottom: 16px; display: flex; gap: 8px; justify-content: center; }
-  .carousel .dots i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.35); }
-  .carousel .dots i.on { background: #fff; }
+  .pills { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; justify-content: center; }
+  .pill { padding: 9px 18px; border-radius: 999px; border: 1px solid var(--border); background: var(--panel);
+          color: var(--muted); font-family: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer;
+          backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+          transition: color .2s, border-color .2s, background .2s; }
+  .pill:hover { color: var(--text); border-color: var(--edge); }
+  .pill.on { background: linear-gradient(90deg, #ff8a3d, #2fc99e); color: #111; border-color: transparent; }
   footer { text-align: center; padding: 60px 20px 80px; color: var(--faint); font-size: 13.5px; }
   .note { font-size: 13px; color: var(--faint); margin-top: 18px; line-height: 1.5; }
 </style>
@@ -124,7 +128,7 @@
 </header>
 
 <div class="hero">
-  <img class="bg" src="img/hero-wipe.jpg" alt="">
+  <img class="bg" src="img/hero-wipe2.jpg" alt="">
   <div class="scrim"></div>
   <div class="card glass">
     <h1>California <span class="accent">Creativity Looks</span></h1>
@@ -135,10 +139,10 @@
 <section>
   <div class="eyebrow">Arraste para comparar</div>
   <h2>Do log ao look.<br><span class="accent">Em um arraste.</span></h2>
-  <p class="sub">Blackmagic Pocket 6K Pro, BRAW Gen5. Esquerda: o arquivo como sai da camera. Direita: o resultado final completo, Golden + Cinestill 50D + Halation + Glow + Grain + Vignette + LUT Malibu.</p>
+  <p class="sub">Blackmagic Pocket 6K Pro, BRAW Gen5. Esquerda: o arquivo como sai da câmera. Direita: o grade final, feito com o California Creativity Looks.</p>
   <div class="compare glass" id="cmp1" style="margin-top:34px;">
-    <img src="img/ata-final.jpg" alt="Resultado final">
-    <div class="top" id="cmp1top"><img src="img/ata-log.jpg" alt="Log original"></div>
+    <img src="img/ata-final2.jpg" alt="Resultado final">
+    <div class="top" id="cmp1top"><img src="img/ata-log2.jpg" alt="Log original"></div>
     <div class="divider" id="cmp1div"></div>
     <div class="knob" id="cmp1knob">&#9666;&#9656;</div>
     <div class="tag l">Log original</div>
@@ -163,10 +167,10 @@
   <div class="eyebrow">Demo · três câmeras, três cenas</div>
   <h2>Qualquer câmera. O mesmo sistema.</h2>
   <div class="grid g2">
-    <div class="tile"><img src="img/l01-log.jpg"><div class="lab">Sony FX3 · S-Log3</div></div>
-    <div class="tile"><img src="img/l01-golden.jpg"><div class="lab">Golden</div></div>
-    <div class="tile"><img src="img/red-log.jpg"><div class="lab">RED · Log3G10</div></div>
-    <div class="tile"><img src="img/red-golden.jpg"><div class="lab">Golden</div></div>
+    <div class="tile"><img src="img/ven-log.jpg"><div class="lab">Sony FX3 · S-Log3</div></div>
+    <div class="tile"><img src="img/ven-final.jpg"><div class="lab">Grade final</div></div>
+    <div class="tile"><img src="img/red-log2.jpg"><div class="lab">RED · Log3G10</div></div>
+    <div class="tile"><img src="img/red-golden2.jpg"><div class="lab">Golden</div></div>
     <div class="tile"><img src="img/dji-log.jpg"><div class="lab">DJI · D-Log</div></div>
     <div class="tile"><img src="img/dji-golden.jpg"><div class="lab">Golden</div></div>
   </div>
@@ -204,7 +208,16 @@
   </div>
 </section>
 
-
+<section>
+  <div class="eyebrow">Resultados</div>
+  <h2>Grades finais, direto da timeline.</h2>
+  <p class="sub">Cenas reais finalizadas com o sistema: câmera, look, filme e óptica resolvidos no mesmo node.</p>
+  <div class="grid g3">
+    <div class="tile"><img src="img/leroy.jpg"></div>
+    <div class="tile"><img src="img/elev1.jpg"></div>
+    <div class="tile"><img src="img/elev2.jpg"></div>
+  </div>
+</section>
 
 <section>
   <div class="eyebrow">Planos · acesso vitalício</div>
@@ -277,18 +290,22 @@
     let idx = 0;
     car.innerHTML = `<img class="slide" src="${items[0][0]}" alt="">
       <div class="clab">${items[0][1]}</div>
-      <button class="arr prev">&#9664;</button><button class="arr next">&#9654;</button>
-      <div class="dots">${items.map((_,i)=>`<i class="${i===0?'on':''}"></i>`).join('')}</div>`;
+      <button class="arr prev">&#9664;</button><button class="arr next">&#9654;</button>`;
+    const pills = document.createElement('div');
+    pills.className = 'pills';
+    pills.innerHTML = items.map((it,i)=>`<button class="pill ${i===0?'on':''}">${it[1]}</button>`).join('');
+    car.after(pills);
     const img = car.querySelector('.slide'), lab = car.querySelector('.clab'),
-          dots = car.querySelectorAll('.dots i');
+          pbs = pills.querySelectorAll('.pill');
     items.forEach(it => { const p = new Image(); p.src = it[0]; });
     function show(i) {
       idx = (i + items.length) % items.length;
       img.src = items[idx][0]; lab.textContent = items[idx][1];
-      dots.forEach((d,j) => d.classList.toggle('on', j === idx));
+      pbs.forEach((p,j) => p.classList.toggle('on', j === idx));
     }
     car.querySelector('.prev').addEventListener('click', () => show(idx - 1));
     car.querySelector('.next').addEventListener('click', () => show(idx + 1));
+    pbs.forEach((p,i) => p.addEventListener('click', () => show(i)));
     let sx = null;
     car.addEventListener('pointerdown', e => sx = e.clientX);
     car.addEventListener('pointerup', e => {
