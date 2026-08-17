@@ -156,6 +156,16 @@
               color: #fff; font-size: 17px; cursor: pointer;
               backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
   .lb .cap { margin-top: 12px; text-align: center; color: #d2d2d7; font-size: 14px; }
+
+  /* botao de download */
+  .dl { display: inline-flex; flex-direction: column; align-items: center; gap: 3px; margin: 26px 0 8px;
+        padding: 20px 46px; border-radius: 999px; text-decoration: none; color: var(--text);
+        transition: transform .2s, box-shadow .2s; position: relative; overflow: hidden; }
+  .dl::before { content: ""; position: absolute; inset: 0; border-radius: 999px;
+        background: linear-gradient(90deg, rgba(56,225,255,0.28), rgba(139,92,246,0.28)); pointer-events: none; }
+  .dl b { font-size: 19px; font-weight: 900; letter-spacing: -0.01em; position: relative; }
+  .dl span { font-size: 13px; color: var(--muted); position: relative; }
+  .dl:hover { transform: translateY(-2px); box-shadow: inset 0 1px 0 var(--edge), 0 18px 50px var(--shadow); }
   .note { font-size: 13px; color: var(--faint); margin-top: 18px; line-height: 1.5; }
 </style>
 </head>
@@ -276,9 +286,13 @@
 <section id="testar">
   <div class="eyebrow">Uso interno · Agência</div>
   <h2>Como testar.</h2>
+  <a class="dl glass" href="../downloads/California-Creativity-Looks-v1.0.1.zip" download>
+    <b>&#8595;&nbsp; Baixar o pacote v1.0.1</b>
+    <span>DCTL + 9 Creative LUTs + PowerGrade + leia-me · 8 MB</span>
+  </a>
   <div class="steps">
-    <div class="step glass"><span class="n">01</span><b>Instalar</b><span>Copie "California Creativity Looks.dctl" e a pasta "looks/" para /Library/Application Support/Blackmagic Design/DaVinci Resolve/LUT/California/ e reinicie o Resolve. Peça o pacote pro Douglas.</span></div>
-    <div class="step glass"><span class="n">02</span><b>Aplicar</b><span>Na página Color, adicione o ResolveFX DCTL num node e selecione California Creativity Looks na DCTL List. Com o PowerGrade oficial, o node já vem montado.</span></div>
+    <div class="step glass"><span class="n">01</span><b>Instalar</b><span>Baixe o pacote no botão acima. Copie "California Creativity Looks.dctl" e a pasta "looks/" para /Library/Application Support/Blackmagic Design/DaVinci Resolve/LUT/California/ e reinicie o Resolve.</span></div>
+    <div class="step glass"><span class="n">02</span><b>Aplicar</b><span>Importe o "California Creativity Looks - PowerGrade.drx" na Gallery da página Color e arraste o still no clipe: o node chega com o plugin já selecionado, sem passar pelo None.</span></div>
     <div class="step glass"><span class="n">03</span><b>Testar de verdade</b><span>Use material real do seu job: skin tone, playback em 4K, as 10 câmeras, os 13 filmes, halation e grain em movimento.</span></div>
     <div class="step glass"><span class="n">04</span><b>Feedback</b><span>O que estranhar, quebrar ou faltar: fala direto com o Douglas. É daqui que sai a próxima versão.</span></div>
   </div>
