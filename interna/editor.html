@@ -91,6 +91,12 @@
             white-space: pre-wrap; }
   @media (max-width: 980px) { .estudio { flex-direction: column; } .painel { width: 100%; max-height: none; }
     .palco { position: relative; top: 0; } }
+
+  /* modo embutido (iframe na home da interna) */
+  body.embed header, body.embed .titulo, body.embed .aurora { display: none; }
+  body.embed { background: transparent; }
+  body.embed main { padding: 0; max-width: none; }
+  body.embed .palco { position: relative; top: 0; }
 </style>
 </head>
 <body>
@@ -719,6 +725,19 @@ function moverWipe(clientX) {
 }
 cv.addEventListener('pointerdown', e => { cv.setPointerCapture(e.pointerId); moverWipe(e.clientX); });
 cv.addEventListener('pointermove', e => { if (e.buttons) { moverWipe(e.clientX); } });
+
+// modo embutido: sem cabecalho, altura reportada pro pai, painel na altura do palco
+if (new URLSearchParams(location.search).has('embed')) {
+  document.body.classList.add('embed');
+  const palco = document.querySelector('.palco');
+  function ajustarEmbed() {
+    painel.style.maxHeight = (window.innerWidth > 980) ? palco.offsetHeight + 'px' : 'none';
+    parent.postMessage({ cclAltura: document.body.scrollHeight }, '*');
+  }
+  new ResizeObserver(ajustarEmbed).observe(document.body);
+  window.addEventListener('resize', ajustarEmbed);
+  setTimeout(ajustarEmbed, 300);
+}
 
 // ---------------------------------------------------------------------------
 // Validacao de paridade (?val=1)

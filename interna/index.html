@@ -188,8 +188,7 @@
   <div class="brand glass">California <span class="accent">Looks</span> · Interna</div>
   <nav class="glass">
     <a href="#demo">Demo</a>
-    <a href="#play">Interativo</a>
-    <a href="editor.html">Editor</a>
+    <a href="#play">Editor</a>
     <a href="#cameras">Câmeras</a>
     <a href="#looks">Looks</a>
     <a href="#films">Films</a>
@@ -225,19 +224,15 @@
   </div>
 </section>
 
-<section id="play">
-  <div class="eyebrow">Demo interativa</div>
-  <h2>Mexa você mesmo.</h2>
-  <p class="sub">Frame RED em log, direto pro Rec.709. Cada posição dos controles é um render de verdade
-     do engine: a cor que aparece aqui é a cor que o plugin entrega no Resolve.</p>
-  <div class="tile glass" style="margin-top:30px;"><img id="playImg" src="../img/play/l1-i100-f0.jpg" alt=""></div>
-  <div class="pills" id="playLooks"></div>
-  <div class="playbar">
-    <label>Look Intensity</label>
-    <input class="pslider" id="playInt" type="range" min="0" max="100" step="20" value="100">
-    <div class="pval" id="playVal">100%</div>
-  </div>
-  <div class="pills" id="playFilms" style="margin-top:12px;"></div>
+<section id="play" style="max-width: 1560px;">
+  <div class="eyebrow">Editor · engine no navegador</div>
+  <h2>O plugin, ao vivo.</h2>
+  <p class="sub">Frame RED em log e o pipeline completo rodando na GPU do seu navegador: grade, looks,
+     os 13 filmes, halation, glow, grain, vignette, Creative LUTs e monitor. Mesmos números do DCTL,
+     validados pixel a pixel. Arraste na imagem para mover o wipe.
+     <a href="editor.html" style="color:var(--accent);">Abrir em tela cheia&nbsp;&#8599;</a></p>
+  <iframe id="edframe" src="editor.html?embed=1" loading="lazy" title="Editor California Creativity Looks"
+          style="width:100%; height:720px; border:0; margin-top:26px; display:block;"></iframe>
 </section>
 
 <section>
@@ -411,37 +406,12 @@
   window.addEventListener('keydown', e => { if (e.key === 'Escape') fecharGal(); });
   document.querySelectorAll('.tile.gal').forEach(t => t.addEventListener('click', () => abrirGal(+t.dataset.g)));
 
-  // demo interativa: cada estado e um render real do engine em ../img/play/
-  const P_LOOKS = ['Clean', 'Golden', 'Coastal', 'Neon', 'Dune', 'Silver', 'Haze'];
-  const P_FILMS = ['Film Off', 'Cinestill 50D', 'Velvia 100'];
-  const pl = { look: 1, inten: 100, film: 0 };
-  const playImg = document.getElementById('playImg');
-  const playInt = document.getElementById('playInt');
-  const lg = document.getElementById('playLooks'), fg = document.getElementById('playFilms');
-  lg.innerHTML = P_LOOKS.map((n, i) => `<button class="pill ${i === 1 ? 'on' : ''}">${n}</button>`).join('');
-  fg.innerHTML = P_FILMS.map((n, i) => `<button class="pill ${i === 0 ? 'on' : ''}">${n}</button>`).join('');
-  function playFonte(l, i, f) { return `../img/play/l${i === 0 ? 0 : l}-i${i}-f${f}.jpg`; }
-  function playUpd() {
-    playImg.src = playFonte(pl.look, pl.inten, pl.film);
-    lg.querySelectorAll('.pill').forEach((p, i) => p.classList.toggle('on', i === pl.look));
-    fg.querySelectorAll('.pill').forEach((p, i) => p.classList.toggle('on', i === pl.film));
-    document.getElementById('playVal').textContent = pl.inten + '%';
-    [pl.inten - 20, pl.inten + 20].forEach(v => {
-      if (v >= 0 && v <= 100) { const im = new Image(); im.src = playFonte(pl.look, v, pl.film); }
-    });
-  }
-  lg.querySelectorAll('.pill').forEach((p, i) => p.addEventListener('click', () => {
-    pl.look = i;
-    if (pl.inten === 0) { pl.inten = 100; playInt.value = 100; }
-    playUpd();
-  }));
-  fg.querySelectorAll('.pill').forEach((p, i) => p.addEventListener('click', () => { pl.film = i; playUpd(); }));
-  playInt.addEventListener('input', e => { pl.inten = +e.target.value; playUpd(); });
-  setTimeout(() => {
-    for (const f of [0, 1, 2]) for (const v of [20, 40, 60, 80, 100]) {
-      const im = new Image(); im.src = playFonte(pl.look, v, f);
+  // editor embutido: altura do iframe reportada pelo filho via postMessage
+  window.addEventListener('message', e => {
+    if (e.data && e.data.cclAltura) {
+      document.getElementById('edframe').style.height = e.data.cclAltura + 'px';
     }
-  }, 1500);
+  });
 
   // carrosseis
   document.querySelectorAll('.carousel').forEach(car => {
