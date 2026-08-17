@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>California Creativity Looks · Interna</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:wght@400;700&display=swap">
+<style>
+  :root[data-theme="dark"] {
+    --bg: #000; --text: #f5f5f7; --muted: #a1a1a6; --faint: #6e6e73;
+    --panel: rgba(255,255,255,0.07); --border: rgba(255,255,255,0.16);
+    --edge: rgba(255,255,255,0.22); --shadow: rgba(0,0,0,0.38);
+    --accent: #38e1ff; --ok: #30d158; --line: #1d1d1f;
+    --pillon: rgba(255,255,255,0.22);
+  }
+  :root[data-theme="light"] {
+    --bg: #f5f5f7; --text: #1d1d1f; --muted: #515154; --faint: #86868b;
+    --panel: rgba(255,255,255,0.55); --border: rgba(0,0,0,0.10);
+    --edge: rgba(255,255,255,0.75); --shadow: rgba(0,0,0,0.10);
+    --accent: #0a84c9; --ok: #1f9d4d; --line: #d9d9de;
+    --pillon: rgba(255,255,255,0.92);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: "Satoshi", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+         background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; transition: background .4s, color .4s; }
+  section { max-width: 1180px; margin: 0 auto; padding: 110px 32px; scroll-margin-top: 84px; }
+  h1 { font-family: "Archivo Black", "Satoshi", sans-serif; font-weight: 400; text-transform: uppercase;
+       font-size: clamp(34px, 5.6vw, 74px); letter-spacing: -0.01em; line-height: 1.04; }
+  h2 { font-family: "Archivo Black", "Satoshi", sans-serif; font-weight: 400; text-transform: uppercase;
+       font-size: clamp(26px, 3.8vw, 46px); letter-spacing: -0.008em; line-height: 1.1; margin-bottom: 14px; }
+  .sub { font-size: 20px; color: var(--muted); line-height: 1.55; letter-spacing: -0.005em; font-weight: 500; }
+  .eyebrow { font-family: "Space Mono", ui-monospace, monospace; font-size: 13px; font-weight: 700;
+             letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+  .accent { color: var(--accent); }
+  .glass { background: var(--panel); border: 1px solid var(--border);
+           backdrop-filter: blur(40px) saturate(130%); -webkit-backdrop-filter: blur(40px) saturate(130%);
+           box-shadow: inset 0 1px 0 var(--edge), 0 12px 40px var(--shadow); border-radius: 20px; }
+  .aurora { position: fixed; inset: 0; pointer-events: none; z-index: -1; }
+  .aurora::before { content: ""; position: absolute; width: 60vw; height: 60vh; left: -18vw; top: -14vh;
+    background: radial-gradient(closest-side, rgba(56,225,255,0.18), transparent); filter: blur(70px); }
+  .aurora::after { content: ""; position: absolute; width: 60vw; height: 60vh; right: -20vw; bottom: -18vh;
+    background: radial-gradient(closest-side, rgba(139,92,246,0.20), transparent); filter: blur(80px); }
+
+  /* topo */
+  header { position: fixed; top: 0; left: 0; right: 0; z-index: 50; display: flex; justify-content: space-between;
+           align-items: center; gap: 10px; padding: 14px 24px; }
+  .brand { font-family: "Archivo Black", sans-serif; font-weight: 400; text-transform: uppercase;
+           font-size: 13px; letter-spacing: 0.01em; padding: 12px 18px; white-space: nowrap; }
+  header nav { display: flex; gap: 2px; padding: 6px 8px; border-radius: 999px; overflow-x: auto;
+               scrollbar-width: none; max-width: 100%; }
+  header nav::-webkit-scrollbar { display: none; }
+  header nav a { color: var(--muted); text-decoration: none; font-size: 13.5px; font-weight: 600;
+                 padding: 8px 13px; border-radius: 999px; white-space: nowrap; transition: color .2s, background .2s; }
+  header nav a:hover { color: var(--text); background: var(--pillon); }
+  #themeToggle { cursor: pointer; border: none; font: inherit; color: var(--text); font-size: 14px; font-weight: 600;
+                 padding: 10px 18px; white-space: nowrap; }
+  @media (max-width: 940px) {
+    header { flex-wrap: wrap; }
+    header nav { order: 3; flex: 1 1 100%; }
+  }
+
+  /* hero */
+  .hero { position: relative; height: 92vh; min-height: 560px; display: flex; align-items: flex-end;
+          justify-content: center; overflow: hidden; }
+  .hero img.bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .hero .scrim { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.8) 95%); }
+  .hero .card { position: relative; margin-bottom: 7vh; text-align: center; padding: 34px 52px; color: #f5f5f7;
+                background: rgba(12,12,14,0.42); border-color: rgba(255,255,255,0.20); }
+  .hero .card .sub { color: #d2d2d7; }
+
+  /* slider antes/depois */
+  .compare { position: relative; border-radius: 20px; overflow: hidden; user-select: none; touch-action: none; cursor: ew-resize; }
+  .compare img { display: block; width: 100%; pointer-events: none; }
+  .compare .top { position: absolute; inset: 0; overflow: hidden; }
+  .compare .top img { height: 100%; width: 100%; object-fit: cover; }
+  .compare .divider { position: absolute; top: 0; bottom: 0; width: 3px; background: #fff; box-shadow: 0 0 14px rgba(0,0,0,.6); }
+  .compare .knob { position: absolute; top: 50%; transform: translate(-50%,-50%); width: 52px; height: 52px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 17px; color: #fff;
+    background: rgba(0,0,0,0.35); border: 1.5px solid rgba(255,255,255,0.8);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  .compare .tag { position: absolute; bottom: 14px; font-size: 13px; font-weight: 600; padding: 6px 12px;
+    border-radius: 999px; color: #fff; background: rgba(0,0,0,0.45); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+  .compare .tag.l { left: 14px; } .compare .tag.r { right: 14px; }
+
+  /* grades */
+  .grid { display: grid; gap: 14px; margin-top: 34px; }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g4 { grid-template-columns: repeat(4, 1fr); }
+  .g5 { grid-template-columns: repeat(5, 1fr); }
+  @media (max-width: 900px) { .g4, .g5 { grid-template-columns: repeat(2, 1fr); } .g3 { grid-template-columns: 1fr; }
+    .steps { flex-direction: column; } }
+  .tile { position: relative; border-radius: 16px; overflow: hidden; }
+  .tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .tile .lab { position: absolute; left: 0; right: 0; bottom: 0; padding: 8px 13px; font-size: 13px; font-weight: 600;
+    color: #fff; background: linear-gradient(0deg, rgba(0,0,0,0.72), transparent); }
+  .tile.text { display: flex; align-items: center; justify-content: center; text-align: center; padding: 18px; min-height: 130px; }
+
+  .steps { display: flex; gap: 14px; margin-top: 34px; }
+  .step { flex: 1; padding: 22px 20px; }
+  .step b { display: block; font-size: 18px; margin-bottom: 7px; }
+  .step span { font-size: 13.5px; color: var(--muted); line-height: 1.5; display: block; }
+  .step .n { font-size: 13px; color: var(--accent); font-weight: 700; margin-bottom: 9px; display: block; }
+
+  table.val { border-collapse: collapse; width: 100%; font-size: 16px; margin-top: 26px; }
+  table.val th, table.val td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); }
+  table.val th { color: var(--faint); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .ok { color: var(--ok); font-weight: 600; }
+
+  .tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 36px; }
+  @media (max-width: 900px) { .tiers { grid-template-columns: 1fr; } }
+  .tier { padding: 32px 28px; }
+  .tier.hi { border-color: var(--accent); }
+  .tier h3 { font-size: 20px; }
+  .tier .preco { font-size: 42px; font-weight: 700; letter-spacing: -0.02em; margin: 12px 0 2px; }
+  .tier .conf { font-size: 12px; color: var(--accent); margin-bottom: 14px; }
+  .tier ul { list-style: none; font-size: 15px; line-height: 1.9; color: var(--muted); }
+  .tier ul li::before { content: "· "; color: var(--accent); font-weight: 700; }
+
+  .carousel { position: relative; border-radius: 20px; overflow: hidden; margin-top: 34px; }
+  .carousel img.slide { display: block; width: 100%; }
+  .carousel .clab { position: absolute; left: 18px; bottom: 18px; font-size: 17px; font-weight: 700; color: #fff;
+    padding: 8px 16px; border-radius: 999px; background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  .carousel .arr { position: absolute; top: 50%; transform: translateY(-50%); width: 48px; height: 48px;
+    border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.7); background: rgba(0,0,0,0.35); color: #fff;
+    font-size: 19px; cursor: pointer; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  .carousel .arr.prev { left: 16px; } .carousel .arr.next { right: 16px; }
+  .pills { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; justify-content: center; }
+  .pill { padding: 9px 18px; border-radius: 999px; border: 1px solid var(--border); background: var(--panel);
+          color: var(--muted); font-family: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer;
+          backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+          transition: color .2s, border-color .2s, background .2s; }
+  .pill:hover { color: var(--text); border-color: var(--edge); }
+  .pill.on { background: linear-gradient(90deg, rgba(56,225,255,0.85), rgba(139,92,246,0.85));
+             color: #0b0b0c; border-color: transparent;
+             box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), 0 8px 24px var(--shadow); }
+  footer { text-align: center; padding: 60px 20px 80px; color: var(--faint); font-size: 13.5px; }
+
+  /* lightbox da galeria */
+  .tile.gal { cursor: pointer; }
+  .lb { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.86);
+        backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+        display: none; align-items: center; justify-content: center; padding: 3vh 3vw; }
+  .lb.open { display: flex; }
+  .lb .box { position: relative; width: min(1500px, 94vw, calc(80vh * 16 / 9)); }
+  .lb .box > img { width: 100%; border-radius: 18px; display: block; }
+  .lb .lb-x { position: absolute; top: 14px; right: 14px; z-index: 3; width: 44px; height: 44px;
+              border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.7); background: rgba(0,0,0,0.4);
+              color: #fff; font-size: 17px; cursor: pointer;
+              backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+  .lb .cap { margin-top: 12px; text-align: center; color: #d2d2d7; font-size: 14px; }
+  .note { font-size: 13px; color: var(--faint); margin-top: 18px; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="aurora"></div>
+<header>
+  <div class="brand glass">California <span class="accent">Looks</span> · Interna</div>
+  <nav class="glass">
+    <a href="#demo">Demo</a>
+    <a href="#cameras">Câmeras</a>
+    <a href="#looks">Looks</a>
+    <a href="#films">Films</a>
+    <a href="#luts">LUTs</a>
+    <a href="#fx">Óptica</a>
+    <a href="#resultados">Resultados</a>
+    <a href="#testar">Testar</a>
+  </nav>
+  <button id="themeToggle" class="glass">◐ Tema</button>
+</header>
+
+<div class="hero">
+  <img class="bg" src="../img/hero-wipe2.jpg" alt="">
+  <div class="scrim"></div>
+  <div class="card glass">
+    <div class="eyebrow" style="color:#9ee9ff;">Versão interna · Agência · Volume 1</div>
+    <h1>California<br><span class="accent">Creativity Looks</span></h1>
+    <div class="sub" style="margin-top:12px;">by <b>Douglas Mendes</b> · Do log ao look em um node.</div>
+  </div>
+</div>
+
+<section id="demo">
+  <div class="eyebrow">Arraste para comparar</div>
+  <h2>Do log ao look.<br><span class="accent">Em um arraste.</span></h2>
+  <p class="sub">Blackmagic Pocket 6K Pro, BRAW Gen5. Esquerda: o arquivo como sai da câmera. Direita: o grade final, feito com o California Creativity Looks.</p>
+  <div class="compare glass" id="cmp1" style="margin-top:34px;">
+    <img src="../img/ata-final2.jpg" alt="Resultado final">
+    <div class="top" id="cmp1top"><img src="../img/ata-log2.jpg" alt="Log original"></div>
+    <div class="divider" id="cmp1div"></div>
+    <div class="knob" id="cmp1knob">&#9666;&#9656;</div>
+    <div class="tag l">Log original</div>
+    <div class="tag r">Resultado final</div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">Como funciona</div>
+  <h2>Seis estágios. Uma decisão de cada vez.</h2>
+  <div class="steps">
+    <div class="step glass"><span class="n">01</span><b>Input</b><span>10 câmeras validadas por medição: ARRI, Sony, RED, Canon, Panasonic, Fuji, Blackmagic, DJI</span></div>
+    <div class="step glass"><span class="n">02</span><b>Look</b><span>7 looks autorais em dois slots, com intensidades independentes</span></div>
+    <div class="step glass"><span class="n">03</span><b>Film</b><span>13 estoques com curva, cor e grão próprios</span></div>
+    <div class="step glass"><span class="n">04</span><b>Óptica</b><span>Halation, Glow e Grain por bitola · Vignette · Color Head</span></div>
+    <div class="step glass"><span class="n">05</span><b>LUT</b><span>9 assinaturas da California</span></div>
+    <div class="step glass"><span class="n">06</span><b>Output</b><span>Rec.709 direto ou DaVinci Intermediate</span></div>
+  </div>
+</section>
+
+<section id="cameras">
+  <div class="eyebrow">Demo · três câmeras, três cenas</div>
+  <h2>Qualquer câmera. O mesmo sistema.</h2>
+  <div class="grid g2">
+    <div class="tile"><img src="../img/ven-log.jpg"><div class="lab">Sony FX3 · S-Log3</div></div>
+    <div class="tile"><img src="../img/ven-final.jpg"><div class="lab">Grade final</div></div>
+    <div class="tile"><img src="../img/red-log2.jpg"><div class="lab">RED · Log3G10</div></div>
+    <div class="tile"><img src="../img/red-final.jpg"><div class="lab">Grade final</div></div>
+    <div class="tile"><img src="../img/dji-log.jpg"><div class="lab">DJI · D-Log</div></div>
+    <div class="tile"><img src="../img/dji-neon.jpg"><div class="lab">Neon · pipeline completo</div></div>
+  </div>
+</section>
+
+<section id="looks">
+  <div class="eyebrow">Looks autorais</div>
+  <h2>Sete looks. Dois slots. Mistura infinita.</h2>
+  <div class="carousel glass" data-car='[["../img/Clean_-_Rec_709.jpg","Clean"],["../img/Golden.jpg","Golden"],["../img/Coastal.jpg","Coastal"],["../img/Neon.jpg","Neon"],["../img/Dune.jpg","Dune"],["../img/Silver.jpg","Silver"],["../img/Haze.jpg","Haze"]]'></div>
+  <div class="note">Main + Sub: dois looks somados, cada um com a sua dose.</div>
+</section>
+
+<section id="films">
+  <div class="eyebrow">Film emulation</div>
+  <h2>Treze estoques com personalidade de verdade.</h2>
+  <div class="carousel glass" data-car='[["../img/ata-Kodak_Ektar_25.jpg","Kodak Ektar 25"],["../img/ata-Kodak_Kodachrome_64.jpg","Kodachrome 64"],["../img/ata-Fuji_Velvia_100.jpg","Fuji Velvia 100"],["../img/ata-Cinestill_50D.jpg","Cinestill 50D"],["../img/ata-Fuji_Superia_1600.jpg","Fuji Superia 1600"],["../img/ata-Prokudin_Gorskiy_1906.jpg","Prokudin Gorskiy 1906"],["../img/ata-Rollei_Ortho_25.jpg","Rollei Ortho 25 · P&B"],["../img/ata-Ilford_HP5_400.jpg","Ilford HP5 400 · P&B"]]'></div>
+  <div class="note">Interpretações autorais do caráter documentado de cada estoque. Nomes em revisão jurídica para comercialização.</div>
+</section>
+
+<section id="luts">
+  <div class="eyebrow">Creative LUTs</div>
+  <h2>A assinatura da California, em nove cartas.</h2>
+  <div class="carousel glass" data-car='[["../img/ata-Malibu.jpg","Malibu"],["../img/ata-Pacific.jpg","Pacific"],["../img/ata-Mojave.jpg","Mojave"],["../img/ata-Laguna.jpg","Laguna"],["../img/ata-Salton.jpg","Salton"],["../img/ata-Joshua.jpg","Joshua"],["../img/ata-Tahoe.jpg","Tahoe"],["../img/ata-Sonoma.jpg","Sonoma"],["../img/ata-Summer.jpg","Summer"]]'></div>
+  <div class="note">Look + Film + LUT: três camadas, três intensidades.</div>
+</section>
+
+<section id="fx">
+  <div class="eyebrow">Textura e óptica</div>
+  <h2>O acabamento que faz parecer filme.</h2>
+  <div class="grid g2">
+    <div class="tile"><img src="../img/fx-halation.jpg"><div class="lab">Halation · sangria quente nas altas, por bitola 8/16/35/65 mm</div></div>
+    <div class="tile"><img src="../img/fx-glow.jpg"><div class="lab">Glow · difusão das altas luzes</div></div>
+    <div class="tile"><img src="../img/fx-vignette.jpg"><div class="lab">Vignette · EV, size, feather, aspect e centro</div></div>
+    <div class="tile"><img src="../img/fx-grain.jpg"><div class="lab">Grain · por bitola e ISO</div></div>
+  </div>
+</section>
+
+<section id="resultados">
+  <div class="eyebrow">Resultados</div>
+  <h2>Grades finais, direto da timeline.</h2>
+  <p class="sub">Cenas reais finalizadas com o sistema: câmera, look, filme e óptica resolvidos no mesmo node.
+     Clique em um frame para ampliar; quando houver o log original, arraste para comparar.</p>
+  <div class="grid g3">
+    <div class="tile gal" data-g="0"><img src="../img/cella-final-g.jpg"></div>
+    <div class="tile gal" data-g="1"><img src="../img/ata-final2.jpg"></div>
+    <div class="tile gal" data-g="2"><img src="../img/ven-final-g.jpg"></div>
+    <div class="tile gal" data-g="3"><img src="../img/leroy-g.jpg"></div>
+    <div class="tile gal" data-g="4"><img src="../img/elev1-g.jpg"></div>
+    <div class="tile gal" data-g="5"><img src="../img/elev2-g.jpg"></div>
+  </div>
+</section>
+
+<section id="testar">
+  <div class="eyebrow">Uso interno · Agência</div>
+  <h2>Como testar.</h2>
+  <div class="steps">
+    <div class="step glass"><span class="n">01</span><b>Instalar</b><span>Copie "California Creativity Looks.dctl" e a pasta "looks/" para /Library/Application Support/Blackmagic Design/DaVinci Resolve/LUT/California/ e reinicie o Resolve. Peça o pacote pro Douglas.</span></div>
+    <div class="step glass"><span class="n">02</span><b>Aplicar</b><span>Na página Color, adicione o ResolveFX DCTL num node e selecione California Creativity Looks na DCTL List. Com o PowerGrade oficial, o node já vem montado.</span></div>
+    <div class="step glass"><span class="n">03</span><b>Testar de verdade</b><span>Use material real do seu job: skin tone, playback em 4K, as 10 câmeras, os 13 filmes, halation e grain em movimento.</span></div>
+    <div class="step glass"><span class="n">04</span><b>Feedback</b><span>O que estranhar, quebrar ou faltar: fala direto com o Douglas. É daqui que sai a próxima versão.</span></div>
+  </div>
+  <div class="note">Build atual: v1.0.1 · Volume 1 · a pasta looks/ contém as 9 Creative LUTs e precisa ser instalada junto.</div>
+</section>
+
+<section style="padding-top: 0;">
+  <div class="eyebrow">Em breve</div>
+  <h2>Volume 2.</h2>
+  <p class="sub">Este é o Volume 1 da família California Creativity Looks. O Volume 2 já está em produção:
+     o que vocês apontarem aqui entra na fila primeiro.</p>
+</section>
+
+<footer>California Creativity Looks · Volume 1 · versão interna da agência · by Douglas Mendes</footer>
+
+<div id="lb" class="lb"><div class="box"></div></div>
+
+<script>
+  // tema black/white
+  const root = document.documentElement;
+  const btn = document.getElementById('themeToggle');
+  const saved = localStorage.getItem('ccl-theme');
+  if (saved) root.dataset.theme = saved;
+  btn.addEventListener('click', () => {
+    root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('ccl-theme', root.dataset.theme);
+  });
+
+  // sliders de comparacao
+  function attachCompare(box) {
+    const top = box.querySelector('.top');
+    const div = box.querySelector('.divider');
+    const knob = box.querySelector('.knob');
+    let pos = 0.5;
+    function render() {
+      const w = box.clientWidth;
+      top.style.clipPath = `inset(0 ${(1 - pos) * 100}% 0 0)`;
+      div.style.left = knob.style.left = (pos * w) + 'px';
+    }
+    function move(clientX) {
+      const r = box.getBoundingClientRect();
+      pos = Math.min(0.99, Math.max(0.01, (clientX - r.left) / r.width));
+      render();
+    }
+    box.addEventListener('pointerdown', e => { box.setPointerCapture(e.pointerId); move(e.clientX); });
+    box.addEventListener('pointermove', e => { if (e.buttons) move(e.clientX); });
+    new ResizeObserver(render).observe(box);
+    box.querySelectorAll('img').forEach(im => { if (!im.complete) im.addEventListener('load', render); });
+    render();
+  }
+  attachCompare(document.getElementById('cmp1'));
+
+  // galeria de resultados com lightbox
+  const GAL = [
+    { f: '../img/cella-final-g.jpg', l: '../img/cella-log-g.jpg', cap: 'RED · Log3G10 · arraste para comparar' },
+    { f: '../img/ata-final2.jpg',    l: '../img/ata-log2.jpg',    cap: 'Blackmagic Pocket 6K Pro · BRAW Gen5 · arraste para comparar' },
+    { f: '../img/ven-final-g.jpg',   l: '../img/ven-log-g.jpg',   cap: 'Sony FX3 · S-Log3 · arraste para comparar' },
+    { f: '../img/leroy-g.jpg',  l: null, cap: 'Grade final' },
+    { f: '../img/elev1-g.jpg',  l: null, cap: 'Grade final' },
+    { f: '../img/elev2-g.jpg',  l: null, cap: 'Grade final' },
+  ];
+  const lb = document.getElementById('lb');
+  const lbBox = lb.querySelector('.box');
+  function abrirGal(i) {
+    const g = GAL[i];
+    lbBox.innerHTML = '<button class="lb-x">&#10005;</button>' + (g.l
+      ? `<div class="compare"><img src="${g.f}"><div class="top"><img src="${g.l}"></div>
+         <div class="divider"></div><div class="knob">&#9666;&#9656;</div>
+         <div class="tag l">Log original</div><div class="tag r">Grade final</div></div>`
+      : `<img src="${g.f}">`)
+      + `<div class="cap">${g.cap}</div>`;
+    if (g.l) attachCompare(lbBox.querySelector('.compare'));
+    lbBox.querySelector('.lb-x').addEventListener('click', fecharGal);
+    lb.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function fecharGal() {
+    lb.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  lb.addEventListener('click', e => { if (e.target === lb) fecharGal(); });
+  window.addEventListener('keydown', e => { if (e.key === 'Escape') fecharGal(); });
+  document.querySelectorAll('.tile.gal').forEach(t => t.addEventListener('click', () => abrirGal(+t.dataset.g)));
+
+  // carrosseis
+  document.querySelectorAll('.carousel').forEach(car => {
+    const items = JSON.parse(car.dataset.car);
+    let idx = 0;
+    car.innerHTML = `<img class="slide" src="${items[0][0]}" alt="">
+      <div class="clab">${items[0][1]}</div>
+      <button class="arr prev">&#9664;</button><button class="arr next">&#9654;</button>`;
+    const pills = document.createElement('div');
+    pills.className = 'pills';
+    pills.innerHTML = items.map((it,i)=>`<button class="pill ${i===0?'on':''}">${it[1]}</button>`).join('');
+    car.after(pills);
+    const img = car.querySelector('.slide'), lab = car.querySelector('.clab'),
+          pbs = pills.querySelectorAll('.pill');
+    items.forEach(it => { const p = new Image(); p.src = it[0]; });
+    function show(i) {
+      idx = (i + items.length) % items.length;
+      img.src = items[idx][0]; lab.textContent = items[idx][1];
+      pbs.forEach((p,j) => p.classList.toggle('on', j === idx));
+    }
+    car.querySelector('.prev').addEventListener('click', () => show(idx - 1));
+    car.querySelector('.next').addEventListener('click', () => show(idx + 1));
+    pbs.forEach((p,i) => p.addEventListener('click', () => show(i)));
+    let sx = null;
+    car.addEventListener('pointerdown', e => sx = e.clientX);
+    car.addEventListener('pointerup', e => {
+      if (sx !== null && Math.abs(e.clientX - sx) > 40) show(idx + (e.clientX < sx ? 1 : -1));
+      sx = null;
+    });
+  });
+</script>
+</body>
+</html>
