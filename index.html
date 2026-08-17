@@ -4,6 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>California Creativity Looks · by Douglas Mendes</title>
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:wght@400;700&display=swap">
 <style>
   :root[data-theme="dark"] {
     --bg: #000; --text: #f5f5f7; --muted: #a1a1a6; --faint: #6e6e73;
@@ -21,16 +26,19 @@
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
-  body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+  body { font-family: "Satoshi", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
          background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; transition: background .4s, color .4s; }
-  section { max-width: 1180px; margin: 0 auto; padding: 110px 32px; }
-  h1 { font-size: clamp(44px, 7vw, 88px); font-weight: 700; letter-spacing: -0.025em; line-height: 1.02; }
-  h2 { font-size: clamp(32px, 4.5vw, 54px); font-weight: 700; letter-spacing: -0.022em; line-height: 1.08; margin-bottom: 14px; }
-  .sub { font-size: 21px; color: var(--muted); line-height: 1.5; letter-spacing: -0.01em; }
-  .eyebrow { font-size: 15px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+  section { max-width: 1180px; margin: 0 auto; padding: 110px 32px; scroll-margin-top: 84px; }
+  h1 { font-family: "Archivo Black", "Satoshi", sans-serif; font-weight: 400; text-transform: uppercase;
+       font-size: clamp(34px, 5.6vw, 74px); letter-spacing: -0.01em; line-height: 1.04; }
+  h2 { font-family: "Archivo Black", "Satoshi", sans-serif; font-weight: 400; text-transform: uppercase;
+       font-size: clamp(26px, 3.8vw, 46px); letter-spacing: -0.008em; line-height: 1.1; margin-bottom: 14px; }
+  .sub { font-size: 20px; color: var(--muted); line-height: 1.55; letter-spacing: -0.005em; font-weight: 500; }
+  .eyebrow { font-family: "Space Mono", ui-monospace, monospace; font-size: 13px; font-weight: 700;
+             letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
   .accent { color: var(--accent); }
   .glass { background: var(--panel); border: 1px solid var(--border);
-           backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%);
+           backdrop-filter: blur(40px) saturate(130%); -webkit-backdrop-filter: blur(40px) saturate(130%);
            box-shadow: inset 0 1px 0 var(--edge), 0 12px 40px var(--shadow); border-radius: 20px; }
   .aurora { position: fixed; inset: 0; pointer-events: none; z-index: -1; }
   .aurora::before { content: ""; position: absolute; width: 60vw; height: 60vh; left: -18vw; top: -14vh;
@@ -40,17 +48,29 @@
 
   /* topo */
   header { position: fixed; top: 0; left: 0; right: 0; z-index: 50; display: flex; justify-content: space-between;
-           align-items: center; padding: 14px 24px; }
-  .brand { font-weight: 700; font-size: 15px; letter-spacing: -0.01em; padding: 10px 18px; }
+           align-items: center; gap: 10px; padding: 14px 24px; }
+  .brand { font-family: "Archivo Black", sans-serif; font-weight: 400; text-transform: uppercase;
+           font-size: 13px; letter-spacing: 0.01em; padding: 12px 18px; white-space: nowrap; }
+  header nav { display: flex; gap: 2px; padding: 6px 8px; border-radius: 999px; overflow-x: auto;
+               scrollbar-width: none; max-width: 100%; }
+  header nav::-webkit-scrollbar { display: none; }
+  header nav a { color: var(--muted); text-decoration: none; font-size: 13.5px; font-weight: 600;
+                 padding: 8px 13px; border-radius: 999px; white-space: nowrap; transition: color .2s, background .2s; }
+  header nav a:hover { color: var(--text); background: var(--pillon); }
   #themeToggle { cursor: pointer; border: none; font: inherit; color: var(--text); font-size: 14px; font-weight: 600;
-                 padding: 10px 18px; }
+                 padding: 10px 18px; white-space: nowrap; }
+  @media (max-width: 940px) {
+    header { flex-wrap: wrap; }
+    header nav { order: 3; flex: 1 1 100%; }
+  }
 
   /* hero */
   .hero { position: relative; height: 92vh; min-height: 560px; display: flex; align-items: flex-end;
           justify-content: center; overflow: hidden; }
   .hero img.bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .hero .scrim { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.8) 95%); }
-  .hero .card { position: relative; margin-bottom: 7vh; text-align: center; padding: 34px 52px; color: #f5f5f7; }
+  .hero .card { position: relative; margin-bottom: 7vh; text-align: center; padding: 34px 52px; color: #f5f5f7;
+                background: rgba(12,12,14,0.42); border-color: rgba(255,255,255,0.20); }
   .hero .card .sub { color: #d2d2d7; }
 
   /* slider antes/depois */
@@ -126,7 +146,17 @@
 <body>
 <div class="aurora"></div>
 <header>
-  <div class="brand glass">California <span class="accent">Creativity Looks</span></div>
+  <div class="brand glass">California <span class="accent">Looks</span></div>
+  <nav class="glass">
+    <a href="#demo">Demo</a>
+    <a href="#cameras">Câmeras</a>
+    <a href="#looks">Looks</a>
+    <a href="#films">Films</a>
+    <a href="#luts">LUTs</a>
+    <a href="#fx">Óptica</a>
+    <a href="#resultados">Resultados</a>
+    <a href="#planos">Planos</a>
+  </nav>
   <button id="themeToggle" class="glass">◐ Tema</button>
 </header>
 
@@ -134,12 +164,13 @@
   <img class="bg" src="img/hero-wipe2.jpg" alt="">
   <div class="scrim"></div>
   <div class="card glass">
-    <h1>California <span class="accent">Creativity Looks</span></h1>
-    <div class="sub" style="margin-top:10px;">by <b>Douglas Mendes</b> · Do log ao look em um node, no DaVinci Resolve.</div>
+    <div class="eyebrow" style="color:#ffb175;">DaVinci Resolve · Node único · DCTL</div>
+    <h1>California<br><span class="accent">Creativity Looks</span></h1>
+    <div class="sub" style="margin-top:12px;">by <b>Douglas Mendes</b> · Do log ao look em um node.</div>
   </div>
 </div>
 
-<section>
+<section id="demo">
   <div class="eyebrow">Arraste para comparar</div>
   <h2>Do log ao look.<br><span class="accent">Em um arraste.</span></h2>
   <p class="sub">Blackmagic Pocket 6K Pro, BRAW Gen5. Esquerda: o arquivo como sai da câmera. Direita: o grade final, feito com o California Creativity Looks.</p>
@@ -166,7 +197,7 @@
   </div>
 </section>
 
-<section>
+<section id="cameras">
   <div class="eyebrow">Demo · três câmeras, três cenas</div>
   <h2>Qualquer câmera. O mesmo sistema.</h2>
   <div class="grid g2">
@@ -179,28 +210,28 @@
   </div>
 </section>
 
-<section>
+<section id="looks">
   <div class="eyebrow">Looks autorais</div>
   <h2>Sete looks. Dois slots. Mistura infinita.</h2>
   <div class="carousel glass" data-car='[["img/Clean_-_Rec_709.jpg","Clean"],["img/Golden.jpg","Golden"],["img/Coastal.jpg","Coastal"],["img/Neon.jpg","Neon"],["img/Dune.jpg","Dune"],["img/Silver.jpg","Silver"],["img/Haze.jpg","Haze"]]'></div>
   <div class="note">Main + Sub: dois looks somados, cada um com a sua dose.</div>
 </section>
 
-<section>
+<section id="films">
   <div class="eyebrow">Film emulation</div>
   <h2>Treze estoques com personalidade de verdade.</h2>
   <div class="carousel glass" data-car='[["img/ata-Kodak_Ektar_25.jpg","Kodak Ektar 25"],["img/ata-Kodak_Kodachrome_64.jpg","Kodachrome 64"],["img/ata-Fuji_Velvia_100.jpg","Fuji Velvia 100"],["img/ata-Cinestill_50D.jpg","Cinestill 50D"],["img/ata-Fuji_Superia_1600.jpg","Fuji Superia 1600"],["img/ata-Prokudin_Gorskiy_1906.jpg","Prokudin Gorskiy 1906"],["img/ata-Rollei_Ortho_25.jpg","Rollei Ortho 25 · P&B"],["img/ata-Ilford_HP5_400.jpg","Ilford HP5 400 · P&B"]]'></div>
   <div class="note">Interpretações autorais do caráter documentado de cada estoque. Nomes em revisão jurídica para comercialização.</div>
 </section>
 
-<section>
+<section id="luts">
   <div class="eyebrow">Creative LUTs</div>
   <h2>A assinatura da California, em nove cartas.</h2>
   <div class="carousel glass" data-car='[["img/ata-Malibu.jpg","Malibu"],["img/ata-Pacific.jpg","Pacific"],["img/ata-Mojave.jpg","Mojave"],["img/ata-Laguna.jpg","Laguna"],["img/ata-Salton.jpg","Salton"],["img/ata-Joshua.jpg","Joshua"],["img/ata-Tahoe.jpg","Tahoe"],["img/ata-Sonoma.jpg","Sonoma"],["img/ata-Summer.jpg","Summer"]]'></div>
   <div class="note">Look + Film + LUT: três camadas, três intensidades.</div>
 </section>
 
-<section>
+<section id="fx">
   <div class="eyebrow">Textura e óptica</div>
   <h2>O acabamento que faz parecer filme.</h2>
   <div class="grid g2">
@@ -211,7 +242,7 @@
   </div>
 </section>
 
-<section>
+<section id="resultados">
   <div class="eyebrow">Resultados</div>
   <h2>Grades finais, direto da timeline.</h2>
   <p class="sub">Cenas reais finalizadas com o sistema: câmera, look, filme e óptica resolvidos no mesmo node.</p>
@@ -222,7 +253,7 @@
   </div>
 </section>
 
-<section>
+<section id="planos">
   <div class="eyebrow">Planos · acesso vitalício</div>
   <h2>Três formas de ter.</h2>
   <div class="tiers">
