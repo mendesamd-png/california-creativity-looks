@@ -138,6 +138,9 @@ const DEF = {
   sombra: 0.0, altas: 0.0, satur: 1.0, densid: 0.35, riquez: 0.25,
   headYB: 0.0, headMG: 0.0, headCR: 0.0, wipe: 0.35,
   filmOpt: 0, filmInt: 1.0, grainProf: 7, grao: 0.0, fmtProf: 2, halat: 0.0, glowa: 0.0,
+  halAmp: 1.0, halThresh: 0.5, halSpread: 0.33, halSat: 1.0, glowAmp: 1.0,
+  halOn: 1, halMask: 0, glowOn: 1, glowMask: 0,
+  headShTone: 0.0, headMidTone: 0.0, headHiTone: 0.0, headImpact: 100.0, headOn: 1,
   vinExpo: 0.0, vinSize: 50.0, vinFeather: 100.0, vinAspect: 0.0, vinCX: 0.0, vinCY: 0.0,
   lutOpt: 0, lutInt: 1.0, falseColor: 0, clipInd: 0,
 };
@@ -151,7 +154,8 @@ const FILMES = ["Off", "Kodak Ektar 25", "Kodak Kodachrome 64", "Konica Impresa 
   "Prokudin Gorskiy 1906", "Rollei Ortho 25", "Agfa XPS 160", "Agfa Scala 200x", "Cinestill 50D",
   "Fuji Velvia 100", "Fuji Superia 1600", "Ilford HP5 400", "Kodak Aerocolor 125"];
 const GRAOS = ["8 mm ISO 50", "8 mm ISO 250", "8 mm ISO 500", "16 mm ISO 50", "16 mm ISO 250",
-  "16 mm ISO 500", "35 mm ISO 50", "35 mm ISO 250", "35 mm ISO 500"];
+  "16 mm ISO 500", "35 mm ISO 50", "35 mm ISO 250", "35 mm ISO 500",
+  "65 mm ISO 50", "65 mm ISO 250", "65 mm ISO 500"];
 const BITOLAS = ["8 mm Super 8", "16 mm Super 16", "35 mm Super 35", "65 mm 70 mm"];
 const LUTS = ["Off", "Malibu", "Pacific", "Mojave", "Laguna", "Salton", "Joshua", "Tahoe", "Sonoma", "Summer"];
 
@@ -181,12 +185,15 @@ uniform vec3 uShTint, uHiTint;
 uniform mat3 uMatIn, uMatOut, uPrintXtalk;
 uniform float uLogc3Top[41];
 uniform int uFilmOpt, uGrainProf, uFmtProf, uLutOpt, uFalseColor, uClipInd, uFrame;
+uniform int uHalOn, uHalMask, uGlowOn, uGlowMask, uHeadOn;
 uniform float uFilmInt, uGrao, uHalat, uGlowa, uLutInt, uLutN;
+uniform float uHalAmp, uHalThresh, uHalSpread, uHalSat, uGlowAmp;
+uniform float uHeadShTone, uHeadMidTone, uHeadHiTone, uHeadImpact;
 uniform float uVinExpo, uVinSize, uVinFeather, uVinAspect, uVinCX, uVinCY;
 uniform float uFilmBW[14], uFilmCon[14], uFilmSat[14], uFilmToe[14], uFilmSho[14], uFilmXt[14];
 uniform float uFilmDen[14], uFilmGrn[14], uFilmLift[14], uFilmHal[14];
 uniform vec3 uFilmCast[14], uFilmBww[14];
-uniform float uGpCell[9], uGpIso[9], uFmtMul[4];
+uniform float uGpCell[12], uGpIso[12], uFmtMul[4];
 uniform vec3 uFcColors[16];
 in vec2 vUv; out vec4 outColor;
 
@@ -312,12 +319,15 @@ void main() {
   float gain = exp2(uExpo);
   vec3 lin = entrada_para_dwg(src) * gain;
 
-  // ---------------- 2b. Halation e Glow (disco 3 aneis x 8, rotacao dithered)
-  float halEff = uHalat * (1.0 + uFilmHal[fOpt] * uFilmInt);
-  if (halEff > 0.0 || uGlowa > 0.0) {
-    float radius = max(4.0, uRes.x * 0.010 * uFmtMul[clamp(uFmtProf, 0, 3)]);
+  // ---------------- 2b. Halation e Glow (v1.1: threshold, amplify, spread, sat, masks)
+  float halEff = (uHalOn == 1 ? uHalat : 0.0) * (1.0 + uFilmHal[fOpt] * uFilmInt) * uHalAmp;
+  float glowEff = (uGlowOn == 1 ? uGlowa : 0.0) * uGlowAmp;
+  if (halEff > 0.0 || glowEff > 0.0 || uHalMask == 1 || uGlowMask == 1) {
+    float radius = max(4.0, uRes.x * 0.010 * uFmtMul[clamp(uFmtProf, 0, 3)]
+                             * (0.4 + 1.8 * uHalSpread));
     uint rseed = (uint(pX) * 73856093u) ^ (uint(pY) * 19349663u) ^ 2654435761u;
     float rot = RAND(rseed) * 0.785398;
+    float halLevel = exp2((uHalThresh - 0.75) * 4.0);
     float eHal = 0.0, eGlow = 0.0, wSum = 0.0;
     for (int ring = 1; ring <= 3; ++ring) {
       float rr = radius * float(ring) / 3.0;
@@ -328,19 +338,31 @@ void main() {
         int sy = clamp(pY + int(rr * sin(ang)), 0, int(uRes.y) - 1);
         vec3 sl = entrada_para_dwg(texelFetch(uTex, ivec2(sx, sy), 0).rgb);
         float lum = (0.30 * sl.r + 0.60 * sl.g + 0.10 * sl.b) * gain;
-        float eh = lum - 1.0;
+        float eh = lum - halLevel;
         if (eh > 0.0) { eHal += wRing * eh / (1.0 + eh); }
-        float eg = lum - 0.55;
+        float eg = lum - 0.45;
         if (eg > 0.0) { eGlow += wRing * eg / (1.0 + eg); }
         wSum += wRing;
       }
     }
     eHal /= wSum;
     eGlow /= wSum;
-    lin.r += halEff * eHal * 0.60;
-    lin.g += halEff * eHal * 0.16;
-    lin.b += halEff * eHal * 0.03;
-    float gAdd = uGlowa * eGlow * 0.35;
+    float mBase = 0.263333;
+    float cR = mBase + (0.90 - mBase) * uHalSat;
+    float cG = mBase + (0.24 - mBase) * uHalSat;
+    float cB = mBase + (0.045 - mBase) * uHalSat;
+    if (uHalMask == 1) {
+      float v = clamp(eHal * 3.0, 0.0, 1.0);
+      outColor = vec4(v * cR * 3.0, v * cG * 3.0, v * cB * 3.0, 1.0); return;
+    }
+    if (uGlowMask == 1) {
+      float v = clamp(eGlow * 3.0, 0.0, 1.0);
+      outColor = vec4(v, v, v, 1.0); return;
+    }
+    lin.r += halEff * eHal * cR;
+    lin.g += halEff * eHal * cG;
+    lin.b += halEff * eHal * cB;
+    float gAdd = glowEff * eGlow * 0.55;
     lin += vec3(gAdd);
   }
 
@@ -348,13 +370,23 @@ void main() {
   float lr = di_encode(lin.r), lg = di_encode(lin.g), lb = di_encode(lin.b);
   const float PIVOT = 0.336;
 
-  // ---------------- 4 + 4b. Warmth + Temp/Tint + Color Head
+  // ---------------- 4 + 4b. Warmth + Temp/Tint + Color Head (v1.1: zonas + impact)
   lr += uWarmth + uTemper * 0.020;
   lg += uTinta * -0.014;
   lb -= uWarmth + uTemper * 0.020;
-  lr += uHeadCR * 0.0006;
-  lg += uHeadMG * 0.0006;
-  lb += uHeadYB * 0.0006;
+  if (uHeadOn == 1) {
+    float imp = uHeadImpact * 0.01;
+    lr += uHeadCR * 0.0006 * imp;
+    lg += uHeadMG * 0.0006 * imp;
+    lb += uHeadYB * 0.0006 * imp;
+    float lumaH = 0.2126 * lr + 0.7152 * lg + 0.0722 * lb;
+    float mSh = 1.0 - smoothstep(0.15, 0.45, lumaH);
+    float mHi = smoothstep(0.55, 0.85, lumaH);
+    float mMid = clamp(1.0 - mSh - mHi, 0.0, 1.0);
+    float tone = (uHeadShTone * mSh + uHeadMidTone * mMid + uHeadHiTone * mHi) * 0.0004 * imp;
+    lr -= tone;
+    lb += tone;
+  }
 
   // ---------------- 5. Contraste
   float conTotal = uContr * uConMul;
@@ -449,7 +481,7 @@ void main() {
   }
 
   // ---------------- 11. Grain (value noise por celula)
-  int gp = clamp(uGrainProf, 0, 8);
+  int gp = clamp(uGrainProf, 0, 11);
   float grainAmt = clamp(uGrao * (1.0 + uFilmGrn[fOpt] * uFilmInt) * uGpIso[gp], 0.0, 1.2);
   if (grainAmt > 0.0) {
     int cell = max(1, int(uRes.x / 3840.0 * uGpCell[gp] + 0.5));
@@ -550,7 +582,8 @@ function render() {
   gl.uniform3fv(U.uHiTint, [0, 1, 2].map(i => ENG.LOOK_HITINT[m * 3 + i] * fM + ENG.LOOK_HITINT[s * 3 + i] * fS));
   gl.uniformMatrix3fv(U.uMatIn, false, colMajor(MATS[P.inOpt] || IDENT));
   for (const k of ['uInOpt|inOpt', 'uOutOpt|outOpt', 'uAntesMostra|antesMostra', 'uFilmOpt|filmOpt',
-    'uGrainProf|grainProf', 'uFmtProf|fmtProf', 'uLutOpt|lutOpt', 'uFalseColor|falseColor', 'uClipInd|clipInd']) {
+    'uGrainProf|grainProf', 'uFmtProf|fmtProf', 'uLutOpt|lutOpt', 'uFalseColor|falseColor', 'uClipInd|clipInd',
+    'uHalOn|halOn', 'uHalMask|halMask', 'uGlowOn|glowOn', 'uGlowMask|glowMask', 'uHeadOn|headOn']) {
     const [uni, chave] = k.split('|');
     gl.uniform1i(U[uni], P[chave]);
   }
@@ -559,7 +592,10 @@ function render() {
     'uSombra|sombra', 'uAltas|altas', 'uSatur|satur', 'uDensid|densid', 'uRiquez|riquez',
     'uHeadYB|headYB', 'uHeadMG|headMG', 'uHeadCR|headCR', 'uFilmInt|filmInt', 'uGrao|grao',
     'uHalat|halat', 'uGlowa|glowa', 'uVinExpo|vinExpo', 'uVinSize|vinSize', 'uVinFeather|vinFeather',
-    'uVinAspect|vinAspect', 'uVinCX|vinCX', 'uVinCY|vinCY', 'uLutInt|lutInt']) {
+    'uVinAspect|vinAspect', 'uVinCX|vinCX', 'uVinCY|vinCY', 'uLutInt|lutInt',
+    'uHalAmp|halAmp', 'uHalThresh|halThresh', 'uHalSpread|halSpread', 'uHalSat|halSat',
+    'uGlowAmp|glowAmp', 'uHeadShTone|headShTone', 'uHeadMidTone|headMidTone',
+    'uHeadHiTone|headHiTone', 'uHeadImpact|headImpact']) {
     const [uni, chave] = k.split('|');
     gl.uniform1f(U[uni], P[chave]);
   }
@@ -625,6 +661,11 @@ const SLIDERS = [
   ['headYB', 'Yellow Blue', -100, 100, 0.5],
   ['headMG', 'Magenta Green', -100, 100, 0.5],
   ['headCR', 'Cyan Red', -100, 100, 0.5],
+  ['headShTone', 'Shadows Tone', -100, 100, 0.5],
+  ['headMidTone', 'Midtones Tone', -100, 100, 0.5],
+  ['headHiTone', 'Highlights Tone', -100, 100, 0.5],
+  ['headImpact', 'Impact', 0, 100, 0.5],
+  ['check', 'headOn', 'Head Enabled'],
   ['sec', 'Looks'],
   ['combo', 'lookMain', 'Main Look', LOOKS],
   ['forcaMain', 'Main Intensity', 0, 1, 0.01],
@@ -638,7 +679,16 @@ const SLIDERS = [
   ['grao', 'Grain Amount', 0, 1, 0.01],
   ['combo', 'fmtProf', 'Glow Profile', BITOLAS],
   ['halat', 'Halation', 0, 1, 0.01],
+  ['halAmp', 'Halation Amplify', 1, 4, 0.05],
+  ['halThresh', 'Halation Threshold', 0, 1, 0.01],
+  ['halSpread', 'Halation Spread', 0, 1, 0.01],
+  ['halSat', 'Halation Saturation', 0, 2, 0.01],
+  ['check', 'halOn', 'Halation Enabled'],
+  ['check', 'halMask', 'Halation Show Isolation'],
   ['glowa', 'Glow', 0, 1, 0.01],
+  ['glowAmp', 'Glow Amplify', 1, 4, 0.05],
+  ['check', 'glowOn', 'Glow Enabled'],
+  ['check', 'glowMask', 'Glow Show Mask'],
   ['sec', 'Vignette'],
   ['vinExpo', 'Exposure EV', -2, 2, 0.01],
   ['vinSize', 'Size', 0, 100, 0.5],
@@ -755,6 +805,9 @@ async function validar() {
     ['ref-filme',     { filmOpt: 9, filmInt: 1.0 }],
     ['ref-fx',        { grao: 0.4, halat: 0.6, glowa: 0.3, vinExpo: -0.8 }],
     ['ref-lut',       { lutOpt: 1, lutInt: 0.7 }],
+    ['ref-v11',       { grao: 0.4, halat: 0.6, glowa: 0.3, halAmp: 2.0, halThresh: 0.35,
+                        halSpread: 0.6, halSat: 1.5, glowAmp: 2.0, headShTone: 30,
+                        headMidTone: -10, headHiTone: -20, headImpact: 80, grainProf: 10 }],
   ];
   const fbTex = gl.createTexture();
   gl.activeTexture(gl.TEXTURE1);
