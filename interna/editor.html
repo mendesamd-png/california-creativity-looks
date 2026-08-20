@@ -111,8 +111,8 @@
     <div class="eyebrow">Editor · engine no navegador</div>
     <h1>O plugin, ao vivo.</h1>
     <p class="sub">Frame RED em log e o pipeline completo do California Creativity Looks portado pra GPU do seu
-       navegador: grade, looks, os 13 filmes, halation, glow, grain, vignette, Creative LUTs e monitor.
-       Mesmos números do DCTL, validados pixel a pixel. Arraste na imagem para mover o wipe.</p>
+       navegador: grade, os 13 looks (paramétricos + LUT looks), os 13 filmes, halation, glow, grain,
+       vignette e monitor. Mesmos números do DCTL, validados pixel a pixel. Arraste na imagem para mover o wipe.</p>
   </div>
 
   <div class="estudio">
@@ -126,14 +126,15 @@
   <div id="valBox"></div>
 </main>
 
-<script src="engine-dados.js?v=112"></script>
-<script src="luts-meta.js?v=112"></script>
+<script src="engine-dados.js?v=113"></script>
+<script src="luts-meta.js?v=113"></script>
 <script>
 // ---------------------------------------------------------------------------
 // Estado (mesmos nomes, faixas e defaults do DCTL)
 // ---------------------------------------------------------------------------
 const DEF = {
   inOpt: 4, outOpt: 1, lookMain: 1, lookSub: 0, antesMostra: 0, antesDepois: 1,
+  // v1.2: looks 0-3 parametricos, 4-12 LUT looks (Malibu..Summer)
   forcaMain: 1.0, forcaSub: 0.0, expo: 0.0, temper: 0.0, tinta: 0.0, contr: 1.0,
   sombra: 0.0, altas: 0.0, satur: 1.0, densid: 0.35, riquez: 0.25,
   headYB: 0.0, headMG: 0.0, headCR: 0.0, wipe: 0.35,
@@ -142,14 +143,15 @@ const DEF = {
   halOn: 1, halMask: 0, glowOn: 1, glowMask: 0,
   headShTone: 0.0, headMidTone: 0.0, headHiTone: 0.0, headImpact: 100.0, headOn: 1,
   vinExpo: 0.0, vinSize: 50.0, vinFeather: 100.0, vinAspect: 0.0, vinCX: 0.0, vinCY: 0.0,
-  lutOpt: 0, lutInt: 1.0, falseColor: 0, clipInd: 0,
+  falseColor: 0, clipInd: 0,
 };
 const P = { ...DEF };
 
 const ENTRADAS = ["DWG DaVinci Intermediate", "ARRI LogC3 AWG3", "ARRI LogC4 AWG4",
   "Sony SLog3 SGamut3 Cine", "RED Log3G10 RWG", "Panasonic VLog VGamut",
   "BMD Film Gen5 Wide Gamut", "Canon Log 3 Cinema Gamut", "Fujifilm FLog2 FGamut", "DJI DLog DGamut"];
-const LOOKS = ["Clean", "Golden", "Coastal", "Neon", "Dune", "Silver", "Haze"];
+const LOOKS = ["Clean", "Golden", "Coastal", "Neon", "Malibu", "Pacific", "Mojave",
+  "Laguna", "Salton", "Joshua", "Tahoe", "Sonoma", "Summer"];
 const FILMES = ["Off", "Kodak Ektar 25", "Kodak Kodachrome 64", "Konica Impresa 50", "Minolta VX400",
   "Prokudin Gorskiy 1906", "Rollei Ortho 25", "Agfa XPS 160", "Agfa Scala 200x", "Cinestill 50D",
   "Fuji Velvia 100", "Fuji Superia 1600", "Ilford HP5 400", "Kodak Aerocolor 125"];
@@ -157,7 +159,6 @@ const GRAOS = ["8 mm ISO 50", "8 mm ISO 250", "8 mm ISO 500", "16 mm ISO 50", "1
   "16 mm ISO 500", "35 mm ISO 50", "35 mm ISO 250", "35 mm ISO 500",
   "65 mm ISO 50", "65 mm ISO 250", "65 mm ISO 500"];
 const BITOLAS = ["8 mm Super 8", "16 mm Super 16", "35 mm Super 35", "65 mm 70 mm"];
-const LUTS = ["Off", "Malibu", "Pacific", "Mojave", "Laguna", "Salton", "Joshua", "Tahoe", "Sonoma", "Summer"];
 
 // ---------------------------------------------------------------------------
 // WebGL2: engine completo portado do DCTL v1.0.1
@@ -175,7 +176,7 @@ precision highp float;
 precision highp int;
 precision highp sampler3D;
 uniform sampler2D uTex;
-uniform sampler3D uLut;
+uniform sampler3D uLutM, uLutS;
 uniform vec2 uRes;
 uniform int uInOpt, uOutOpt, uAntesMostra, uAntesDepois;
 uniform float uWipe, uExpo, uTemper, uTinta, uContr, uSombra, uAltas, uSatur, uDensid, uRiquez;
@@ -184,9 +185,11 @@ uniform float uWarmth, uLift, uSatMul, uConMul, uDenBias;
 uniform vec3 uShTint, uHiTint;
 uniform mat3 uMatIn, uMatOut, uPrintXtalk;
 uniform float uLogc3Top[41];
-uniform int uFilmOpt, uGrainProf, uFmtProf, uLutOpt, uFalseColor, uClipInd, uFrame;
+uniform int uFilmOpt, uGrainProf, uFmtProf, uFalseColor, uClipInd, uFrame;
 uniform int uHalOn, uHalMask, uGlowOn, uGlowMask, uHeadOn;
-uniform float uFilmInt, uGrao, uHalat, uGlowa, uLutInt, uLutN;
+uniform int uLutMOn, uLutSOn;
+uniform float uFilmInt, uGrao, uHalat, uGlowa;
+uniform float uLutMN, uLutSN, uDoseM, uDoseS;
 uniform float uHalAmp, uHalThresh, uHalSpread, uHalSat, uGlowAmp;
 uniform float uHeadShTone, uHeadMidTone, uHeadHiTone, uHeadImpact;
 uniform float uVinExpo, uVinSize, uVinFeather, uVinAspect, uVinCX, uVinCY;
@@ -515,11 +518,16 @@ void main() {
   }
   vec3 rec = dwg_para_rec709(vec3(di_decode(lr), di_decode(lg), di_decode(lb)));
 
-  // ---------------- 13. Creative LUT
-  if (uLutOpt != 0 && uLutInt > 0.0) {
+  // ---------------- 13. LUT looks (Main antes do Sub), display-referred pos 709
+  if (uLutMOn == 1 && uDoseM > 0.0) {
     vec3 c = clamp(rec, 0.0, 1.0);
-    vec3 l = texture(uLut, (c * (uLutN - 1.0) + 0.5) / uLutN).rgb;
-    rec += (l - rec) * uLutInt;
+    vec3 l = texture(uLutM, (c * (uLutMN - 1.0) + 0.5) / uLutMN).rgb;
+    rec += (l - rec) * uDoseM;
+  }
+  if (uLutSOn == 1 && uDoseS > 0.0) {
+    vec3 c = clamp(rec, 0.0, 1.0);
+    vec3 l = texture(uLutS, (c * (uLutSN - 1.0) + 0.5) / uLutSN).rgb;
+    rec += (l - rec) * uDoseS;
   }
   outColor = vec4(monitor_overlay(rec), 1.0);
 }`;
@@ -566,13 +574,16 @@ gl.uniform3fv(U.uFilmBww, ENG.FILM_BWW);
 gl.uniform3fv(U.uFcColors, ENG.FC_COLORS);
 gl.uniform2f(U.uRes, cv.width, cv.height);
 gl.uniform1i(U.uTex, 0);
-gl.uniform1i(U.uLut, 2);
+gl.uniform1i(U.uLutM, 2);
+gl.uniform1i(U.uLutS, 3);
 gl.uniform1i(U.uFrame, 1);
 
 let texPronta = false;
 function render() {
   if (!texPronta) { return; }
-  const m = P.lookMain, s = P.lookSub, fM = P.forcaMain, fS = P.forcaSub;
+  // v1.2: parametricos (0-3) agem no log DI; LUT looks (4-12) agem na saida 709
+  const m = P.lookMain < 4 ? P.lookMain : 0, s = P.lookSub < 4 ? P.lookSub : 0;
+  const fM = P.lookMain < 4 ? P.forcaMain : 0, fS = P.lookSub < 4 ? P.forcaSub : 0;
   gl.uniform1f(U.uWarmth, ENG.LOOK_WARMTH[m] * fM + ENG.LOOK_WARMTH[s] * fS);
   gl.uniform1f(U.uLift, ENG.LOOK_LIFT[m] * fM + ENG.LOOK_LIFT[s] * fS);
   gl.uniform1f(U.uSatMul, 1.0 + (ENG.LOOK_SATMUL[m] - 1.0) * fM + (ENG.LOOK_SATMUL[s] - 1.0) * fS);
@@ -580,9 +591,13 @@ function render() {
   gl.uniform1f(U.uDenBias, ENG.LOOK_DENBIAS[m] * fM + ENG.LOOK_DENBIAS[s] * fS);
   gl.uniform3fv(U.uShTint, [0, 1, 2].map(i => ENG.LOOK_SHTINT[m * 3 + i] * fM + ENG.LOOK_SHTINT[s * 3 + i] * fS));
   gl.uniform3fv(U.uHiTint, [0, 1, 2].map(i => ENG.LOOK_HITINT[m * 3 + i] * fM + ENG.LOOK_HITINT[s * 3 + i] * fS));
+  gl.uniform1i(U.uLutMOn, P.lookMain >= 4 ? 1 : 0);
+  gl.uniform1i(U.uLutSOn, P.lookSub >= 4 ? 1 : 0);
+  gl.uniform1f(U.uDoseM, P.forcaMain);
+  gl.uniform1f(U.uDoseS, P.forcaSub);
   gl.uniformMatrix3fv(U.uMatIn, false, colMajor(MATS[P.inOpt] || IDENT));
   for (const k of ['uInOpt|inOpt', 'uOutOpt|outOpt', 'uAntesMostra|antesMostra', 'uFilmOpt|filmOpt',
-    'uGrainProf|grainProf', 'uFmtProf|fmtProf', 'uLutOpt|lutOpt', 'uFalseColor|falseColor', 'uClipInd|clipInd',
+    'uGrainProf|grainProf', 'uFmtProf|fmtProf', 'uFalseColor|falseColor', 'uClipInd|clipInd',
     'uHalOn|halOn', 'uHalMask|halMask', 'uGlowOn|glowOn', 'uGlowMask|glowMask', 'uHeadOn|headOn']) {
     const [uni, chave] = k.split('|');
     gl.uniform1i(U[uni], P[chave]);
@@ -592,7 +607,7 @@ function render() {
     'uSombra|sombra', 'uAltas|altas', 'uSatur|satur', 'uDensid|densid', 'uRiquez|riquez',
     'uHeadYB|headYB', 'uHeadMG|headMG', 'uHeadCR|headCR', 'uFilmInt|filmInt', 'uGrao|grao',
     'uHalat|halat', 'uGlowa|glowa', 'uVinExpo|vinExpo', 'uVinSize|vinSize', 'uVinFeather|vinFeather',
-    'uVinAspect|vinAspect', 'uVinCX|vinCX', 'uVinCY|vinCY', 'uLutInt|lutInt',
+    'uVinAspect|vinAspect', 'uVinCX|vinCX', 'uVinCY|vinCY',
     'uHalAmp|halAmp', 'uHalThresh|halThresh', 'uHalSpread|halSpread', 'uHalSat|halSat',
     'uGlowAmp|glowAmp', 'uHeadShTone|headShTone', 'uHeadMidTone|headMidTone',
     'uHeadHiTone|headHiTone', 'uHeadImpact|headImpact']) {
@@ -619,18 +634,19 @@ fetch('cella1-log.f16').then(r => r.arrayBuffer()).then(bufIn => {
   if (new URLSearchParams(location.search).has('val')) { validar(); }
 });
 
-// LUTs em resolucao nativa (paridade exata), um arquivo por LUT, cache em memoria
+// LUT looks em resolucao nativa, um arquivo por LUT, cache em memoria.
+// Slot M usa a unidade de textura 2, slot S a unidade 3.
 const lutCache = {};
-const lutTex3D = gl.createTexture();
-async function usarLut(idx) {
-  if (idx === 0) { return; }
-  const meta = LUTS_META[idx - 1];
+const lutTexSlots = { M: gl.createTexture(), S: gl.createTexture() };
+async function usarLutSlot(slot, lookIdx) {
+  if (lookIdx < 4) { return; }
+  const meta = LUTS_META[lookIdx - 4];
   if (!lutCache[meta.nome]) {
     lutCache[meta.nome] = await (await fetch(`lut-${meta.nome}.f16`)).arrayBuffer();
   }
   const dados = new Uint16Array(lutCache[meta.nome]);
-  gl.activeTexture(gl.TEXTURE2);
-  gl.bindTexture(gl.TEXTURE_3D, lutTex3D);
+  gl.activeTexture(slot === 'M' ? gl.TEXTURE2 : gl.TEXTURE3);
+  gl.bindTexture(gl.TEXTURE_3D, lutTexSlots[slot]);
   gl.texImage3D(gl.TEXTURE_3D, 0, gl.RGBA16F, meta.N, meta.N, meta.N, 0, gl.RGBA, gl.HALF_FLOAT, dados);
   gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
@@ -638,7 +654,7 @@ async function usarLut(idx) {
   gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_R, gl.CLAMP_TO_EDGE);
   gl.activeTexture(gl.TEXTURE0);
-  gl.uniform1f(U.uLutN, meta.N);
+  gl.uniform1f(slot === 'M' ? U.uLutMN : U.uLutSN, meta.N);
   render();
 }
 
@@ -698,9 +714,6 @@ const SLIDERS = [
   ['vinAspect', 'Aspect', -100, 100, 0.5],
   ['vinCX', 'Center X', -1, 1, 0.01],
   ['vinCY', 'Center Y', -1, 1, 0.01],
-  ['sec', 'Creative LUT'],
-  ['combo', 'lutOpt', 'Creative LUT', LUTS],
-  ['lutInt', 'LUT Intensity', 0, 1, 0.01],
   ['sec', 'Monitor'],
   ['check', 'falseColor', 'False Color IRE'],
   ['check', 'clipInd', 'Clipping'],
@@ -750,7 +763,8 @@ painel.addEventListener('input', e => {
   P[chave] = e.target.type === 'checkbox' ? (e.target.checked ? 1 : 0) : +e.target.value;
   sincronizar(chave);
   atualizarTags();
-  if (chave === 'lutOpt' && P.lutOpt !== 0) { usarLut(P.lutOpt); return; }
+  if (chave === 'lookMain' && P.lookMain >= 4) { usarLutSlot('M', P.lookMain); return; }
+  if (chave === 'lookSub' && P.lookSub >= 4) { usarLutSlot('S', P.lookSub); return; }
   render();
 });
 painel.addEventListener('click', e => {
@@ -801,12 +815,13 @@ async function validar() {
   const CONFS = [
     ['ref-neutra',    { lookMain: 0, forcaMain: 0 }],
     ['ref-golden',    {}],
-    ['ref-carregada', { lookMain: 3, forcaMain: 0.7, lookSub: 4, forcaSub: 0.4, expo: 0.5,
+    ['ref-carregada', { lookMain: 3, forcaMain: 0.7, lookSub: 2, forcaSub: 0.4, expo: 0.5,
                         temper: -0.3, tinta: 0.2, contr: 1.2, sombra: 0.2, altas: -0.3,
                         satur: 1.1, densid: 0.5, riquez: 0.6, headYB: 20, headMG: -15, headCR: 10 }],
     ['ref-filme',     { filmOpt: 9, filmInt: 1.0 }],
     ['ref-fx',        { grao: 0.4, halat: 0.6, glowa: 0.3, vinExpo: -0.8 }],
-    ['ref-lut',       { lutOpt: 1, lutInt: 0.7 }],
+    ['ref-lut',       { lookSub: 4, forcaSub: 0.7 }],
+    ['ref-lut2',      { lookMain: 4, forcaMain: 1.0, lookSub: 12, forcaSub: 0.5 }],
     ['ref-v11',       { grao: 0.4, halat: 0.6, glowa: 0.3, halAmp: 2.0, halThresh: 0.35,
                         halSpread: 0.6, halSat: 1.5, glowAmp: 2.0, headShTone: 30,
                         headMidTone: -10, headHiTone: -20, headImpact: 80, grainProf: 10 }],
@@ -824,7 +839,12 @@ async function validar() {
   let saida = '';
   for (const [nome, over] of CONFS) {
     Object.assign(P, DEF, { antesDepois: 0 }, over);
-    if (P.lutOpt !== 0) { gl.bindFramebuffer(gl.FRAMEBUFFER, null); await usarLut(P.lutOpt); gl.bindFramebuffer(gl.FRAMEBUFFER, fb); }
+    if (P.lookMain >= 4 || P.lookSub >= 4) {
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      if (P.lookMain >= 4) { await usarLutSlot('M', P.lookMain); }
+      if (P.lookSub >= 4) { await usarLutSlot('S', P.lookSub); }
+      gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+    }
     render();
     const got = new Float32Array(1200 * 675 * 4);
     gl.readPixels(0, 0, 1200, 675, gl.RGBA, gl.FLOAT, got);
