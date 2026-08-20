@@ -126,16 +126,17 @@
   <div id="valBox"></div>
 </main>
 
-<script src="engine-dados.js?v=113"></script>
-<script src="luts-meta.js?v=113"></script>
+<script src="engine-dados.js?v=114"></script>
+<script src="luts-meta.js?v=114"></script>
 <script>
 // ---------------------------------------------------------------------------
 // Estado (mesmos nomes, faixas e defaults do DCTL)
 // ---------------------------------------------------------------------------
 const DEF = {
-  inOpt: 4, outOpt: 1, lookMain: 1, lookSub: 0, antesMostra: 0, antesDepois: 1,
+  inOpt: 4, outOpt: 1, lookMain: 3, lookSub: 12, antesMostra: 0, antesDepois: 1,
   // v1.2: looks 0-3 parametricos, 4-12 LUT looks (Malibu..Summer)
-  forcaMain: 1.0, forcaSub: 0.0, expo: 0.0, temper: 0.0, tinta: 0.0, contr: 1.0,
+  // default de vitrine: Neon 100% + Summer 30% (pedido do Douglas)
+  forcaMain: 1.0, forcaSub: 0.3, expo: 0.0, temper: 0.0, tinta: 0.0, contr: 1.0,
   sombra: 0.0, altas: 0.0, satur: 1.0, densid: 0.35, riquez: 0.25,
   headYB: 0.0, headMG: 0.0, headCR: 0.0, wipe: 0.35,
   filmOpt: 0, filmInt: 1.0, grainProf: 7, grao: 0.0, fmtProf: 2, halat: 0.0, glowa: 0.0,
@@ -631,6 +632,8 @@ fetch('cella1-log.f16').then(r => r.arrayBuffer()).then(bufIn => {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
   texPronta = true;
   render();
+  if (DEF.lookSub >= 4) { usarLutSlot('S', DEF.lookSub); }
+  if (DEF.lookMain >= 4) { usarLutSlot('M', DEF.lookMain); }
   if (new URLSearchParams(location.search).has('val')) { validar(); }
 });
 
@@ -812,6 +815,8 @@ async function validar() {
   const ext = gl.getExtension('EXT_color_buffer_float');
   const box = document.getElementById('valBox');
   if (!ext) { box.textContent = 'EXT_color_buffer_float indisponivel.'; return; }
+  // base neutra da validacao (independe do default de vitrine do DEF)
+  const VALBASE = { ...DEF, lookMain: 1, forcaMain: 1.0, lookSub: 0, forcaSub: 0.0 };
   const CONFS = [
     ['ref-neutra',    { lookMain: 0, forcaMain: 0 }],
     ['ref-golden',    {}],
@@ -838,7 +843,7 @@ async function validar() {
   gl.activeTexture(gl.TEXTURE0);
   let saida = '';
   for (const [nome, over] of CONFS) {
-    Object.assign(P, DEF, { antesDepois: 0 }, over);
+    Object.assign(P, VALBASE, { antesDepois: 0 }, over);
     if (P.lookMain >= 4 || P.lookSub >= 4) {
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
       if (P.lookMain >= 4) { await usarLutSlot('M', P.lookMain); }

@@ -164,10 +164,10 @@
   <div class="brand glass">California <span class="accent">Looks</span></div>
   <nav class="glass">
     <a href="#demo">Demo</a>
+    <a href="#play">Editor</a>
     <a href="#cameras">Câmeras</a>
     <a href="#looks">Looks</a>
     <a href="#films">Films</a>
-    <a href="#luts">LUTs</a>
     <a href="#fx">Óptica</a>
     <a href="#resultados">Resultados</a>
     <a href="#planos">Planos</a>
@@ -199,15 +199,25 @@
   </div>
 </section>
 
+<section id="play" style="max-width: 1560px;">
+  <div class="eyebrow">Teste agora · engine no navegador</div>
+  <h2>Experimente o plugin, ao vivo.</h2>
+  <p class="sub">O pipeline completo do California Creativity Looks rodando na GPU do seu navegador,
+     com os mesmos números do DCTL, validados pixel a pixel contra o plugin. Um frame RED em log:
+     mexa nos controles e arraste o wipe na imagem.</p>
+  <iframe id="edframe" src="interna/editor.html?embed=1&amp;v=114" loading="lazy" title="Editor California Creativity Looks"
+          style="width:100%; height:720px; border:0; margin-top:26px; display:block;"></iframe>
+</section>
+
 <section>
   <div class="eyebrow">Como funciona</div>
   <h2>Seis estágios. Uma decisão de cada vez.</h2>
   <div class="steps">
     <div class="step glass"><span class="n">01</span><b>Input</b><span>10 câmeras validadas por medição: ARRI, Sony, RED, Canon, Panasonic, Fuji, Blackmagic, DJI</span></div>
-    <div class="step glass"><span class="n">02</span><b>Look</b><span>7 looks autorais em dois slots, com intensidades independentes</span></div>
+    <div class="step glass"><span class="n">02</span><b>Look</b><span>13 looks em dois slots: 4 paramétricos + as 9 LUT looks da California</span></div>
     <div class="step glass"><span class="n">03</span><b>Film</b><span>13 estoques com curva, cor e grão próprios</span></div>
     <div class="step glass"><span class="n">04</span><b>Óptica</b><span>Halation, Glow e Grain por bitola · Vignette · Color Head</span></div>
-    <div class="step glass"><span class="n">05</span><b>LUT</b><span>9 assinaturas da California</span></div>
+    <div class="step glass"><span class="n">05</span><b>Monitor</b><span>False Color IRE 16 zonas e Clipping Indication</span></div>
     <div class="step glass"><span class="n">06</span><b>Output</b><span>Rec.709 direto ou DaVinci Intermediate</span></div>
   </div>
 </section>
@@ -226,10 +236,11 @@
 </section>
 
 <section id="looks">
-  <div class="eyebrow">Looks autorais</div>
-  <h2>Sete looks. Dois slots. Mistura infinita.</h2>
-  <div class="carousel glass" data-car='[["img/Clean_-_Rec_709.jpg","Clean"],["img/Golden.jpg","Golden"],["img/Coastal.jpg","Coastal"],["img/Neon.jpg","Neon"],["img/Dune.jpg","Dune"],["img/Silver.jpg","Silver"],["img/Haze.jpg","Haze"]]'></div>
-  <div class="note">Main + Sub: dois looks somados, cada um com a sua dose.</div>
+  <div class="eyebrow">Looks · paramétricos + LUT looks</div>
+  <h2>Treze looks. Dois slots. Mistura infinita.</h2>
+  <div class="carousel glass" data-car='[["img/lk12-00-clean.jpg","Clean"],["img/lk12-01-golden.jpg","Golden"],["img/lk12-02-coastal.jpg","Coastal"],["img/lk12-03-neon.jpg","Neon"],["img/lk12-04-malibu.jpg","Malibu"],["img/lk12-05-pacific.jpg","Pacific"],["img/lk12-06-mojave.jpg","Mojave"],["img/lk12-07-laguna.jpg","Laguna"],["img/lk12-08-salton.jpg","Salton"],["img/lk12-09-joshua.jpg","Joshua"],["img/lk12-10-tahoe.jpg","Tahoe"],["img/lk12-11-sonoma.jpg","Sonoma"],["img/lk12-12-summer.jpg","Summer"]]'></div>
+  <div class="note">Main + Sub: dois looks somados, cada um com a sua dose. Clean a Neon são paramétricos;
+     Malibu a Summer são as LUT looks autorais da California, aplicadas na saída Rec.709.</div>
 </section>
 
 <section id="films">
@@ -239,12 +250,6 @@
   <div class="note">Interpretações autorais do caráter documentado de cada estoque. Nomes em revisão jurídica para comercialização.</div>
 </section>
 
-<section id="luts">
-  <div class="eyebrow">Creative LUTs</div>
-  <h2>A assinatura da California, em nove cartas.</h2>
-  <div class="carousel glass" data-car='[["img/ata-Malibu.jpg","Malibu"],["img/ata-Pacific.jpg","Pacific"],["img/ata-Mojave.jpg","Mojave"],["img/ata-Laguna.jpg","Laguna"],["img/ata-Salton.jpg","Salton"],["img/ata-Joshua.jpg","Joshua"],["img/ata-Tahoe.jpg","Tahoe"],["img/ata-Sonoma.jpg","Sonoma"],["img/ata-Summer.jpg","Summer"]]'></div>
-  <div class="note">Look + Film + LUT: três camadas, três intensidades.</div>
-</section>
 
 <section id="fx">
   <div class="eyebrow">Textura e óptica</div>
@@ -377,6 +382,13 @@
   lb.addEventListener('click', e => { if (e.target === lb) fecharGal(); });
   window.addEventListener('keydown', e => { if (e.key === 'Escape') fecharGal(); });
   document.querySelectorAll('.tile.gal').forEach(t => t.addEventListener('click', () => abrirGal(+t.dataset.g)));
+
+  // editor embutido: altura reportada pelo iframe
+  window.addEventListener('message', e => {
+    if (e.data && e.data.cclAltura) {
+      document.getElementById('edframe').style.height = e.data.cclAltura + 'px';
+    }
+  });
 
   // carrosseis
   document.querySelectorAll('.carousel').forEach(car => {
